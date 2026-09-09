@@ -18,7 +18,8 @@ test('responsive navigation, keyboard input, locale, and reflow smoke', async ({
     await expect(page.locator('#mobile-nav').getByRole('link', { name: 'Akun', exact: true })).toBeVisible()
     await page.locator('#mobile-nav').getByRole('link', { name: 'Akun', exact: true }).click()
   }
-  await page.getByLabel('Bahasa / Language').selectOption('en-US')
+  await page.getByLabel('Bahasa / Language').click()
+  await page.getByRole('option', { name: 'English' }).click()
   await expect(page.getByRole('heading', { name: 'Your account' })).toBeVisible()
   await checkLayout(page)
   await page.screenshot({ path: `test-results/${testInfo.project.name}-account.png`, fullPage: true })
