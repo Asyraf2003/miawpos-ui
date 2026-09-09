@@ -2,7 +2,7 @@
 
 Responsive browser client for the authoritative sibling `meawpos-api`. The bounded R6 authentication slice uses Google OIDC for production human login, then recovers the authoritative MiawPOS session after reload and revokes it on logout. The login/session slice is implemented, locally proven, committed, and pushed; full R6 remains open.
 
-Canonical rules: [AGENTS.md](AGENTS.md), then the backend's private docs chain. Current implementation/proof checkpoint: [R6 session proof](docs/evidence/0008_r6_login_session_client_slice.md). The `docs` path is intentionally a symlink into the private canonical documentation surface; private docs content is not vendored into this public repository.
+Canonical rules: [AGENTS.md](AGENTS.md), then the backend's private docs chain. In a local workspace with the private docs checkout initialized, the current implementation/proof checkpoint is `docs/evidence/0008_r6_login_session_client_slice.md`. The `docs` path is intentionally a symlink into the private canonical documentation surface; private docs content is not vendored into this public repository.
 
 ## Run locally
 
@@ -41,7 +41,7 @@ GITLEAKS_BIN=/path/to/gitleaks-8.30.1 bash scripts/security-secrets.sh
 
 `proof:browser` requires Go, PostgreSQL CLI tools (`initdb`, `pg_ctl`, `createdb`, `psql`), OpenSSL, curl, the initialized backend docs submodule, and free ports 55437/8081/4173/4184. Run as a non-root user able to initialize PostgreSQL. It starts a disposable cluster, the real sibling backend, and a deterministic external OIDC test boundary. The backend still performs discovery, state/nonce/PKCE checks, signed ID-token verification, account/identity persistence, and session creation. The harness serves the **existing** `dist` through a test-only HTTPS reverse proxy, executes the tablet session chain plus desktop/mobile smoke, and removes its temporary database, keys, and logs. Screenshots remain in ignored `test-results/`; credential-bearing traces and storage state are never exported.
 
-The proof hashes recorded in `docs/evidence/0008_r6_login_session_client_slice.md` identify the exact earlier browser-tested artifact. A later presentation-only locale-dropdown refinement is committed on `main`; do not silently treat the earlier hashes as hashes for a later build.
+The proof hashes recorded in the private evidence checkpoint identify the exact earlier browser-tested artifact. A later presentation-only locale-dropdown refinement is committed on `main`; do not silently treat the earlier hashes as hashes for a later build.
 
 ## Static hosting
 
