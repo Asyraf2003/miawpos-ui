@@ -10,6 +10,13 @@ interface Presentation {
 }
 
 export const presentationCatalog = {
+  'sale.pending': { titleKey: 'feedback.request.title', bodyKey: 'sale.pendingBody', surface: 'inline', actions: [], allowedParams: [] },
+  'sale.not_found': { titleKey: 'feedback.request.title', bodyKey: 'sale.missing', surface: 'inline', actions: [], allowedParams: [] },
+  'sale.already_reversed': { titleKey: 'feedback.request.title', bodyKey: 'sale.alreadyReversed', surface: 'inline', actions: [], allowedParams: [] },
+  'sale.idempotency_conflict': { titleKey: 'feedback.request.title', bodyKey: 'sale.conflict', surface: 'inline', actions: [], allowedParams: [] },
+  'payment.insufficient_cash': { titleKey: 'feedback.request.title', bodyKey: 'sale.insufficient', surface: 'inline', actions: [], allowedParams: [] },
+  'catalog.item_not_found': { titleKey: 'feedback.request.title', bodyKey: 'catalog.missing', surface: 'inline', actions: [], allowedParams: [] },
+  'catalog.item_not_sellable': { titleKey: 'feedback.request.title', bodyKey: 'catalog.unsellable', surface: 'inline', actions: [], allowedParams: [] },
   'auth.login_required': { titleKey: 'feedback.login.title', bodyKey: 'feedback.login.body', surface: 'inline', actions: ['login'], allowedParams: [] },
   'auth.session_expired': { titleKey: 'feedback.expired.title', bodyKey: 'feedback.expired.body', surface: 'blocking', actions: ['login'], allowedParams: [] },
   'auth.logged_out': { titleKey: 'feedback.logout.title', bodyKey: 'feedback.logout.body', surface: 'inline', actions: [], allowedParams: [] },

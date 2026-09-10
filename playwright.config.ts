@@ -16,7 +16,7 @@ export default defineConfig({
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : {},
   },
   projects: [
-    { name: 'tablet', use: { viewport: { width: 820, height: 1180 }, hasTouch: true, isMobile: true }, testMatch: 'session.spec.ts' },
+    { name: 'tablet', use: { viewport: { width: 820, height: 1180 }, hasTouch: true, isMobile: true }, testMatch: ['session.spec.ts', 'root.spec.ts'] },
     { name: 'desktop', use: { viewport: { width: 1440, height: 1000 } }, testMatch: 'responsive.spec.ts' },
     { name: 'mobile', use: { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }, testMatch: 'responsive.spec.ts' },
   ],

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
-import { NavLink } from 'react-router'
+import { Link, NavLink } from 'react-router'
 import { CircleCheck, LogOut, Menu, UserRound, X } from 'lucide-react'
-import { Button } from '../../components/ui/button'
+import { Button, buttonVariants } from '../../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '../../components/ui/card'
 import { useLocale, useSession } from '../context'
 import { OutcomeFeedback } from '../feedback/outcome-feedback'
@@ -64,8 +64,8 @@ export function AccountPage() {
         </Card>
         <section className="flex flex-col items-center rounded-xl border border-dashed px-6 py-12 text-center">
           <div className="mb-4 flex size-12 items-center justify-center rounded-xl border bg-muted/50"><UserRound className="size-5" aria-hidden="true" /></div>
-          <h2 className="text-sm font-semibold">{t('session.placeholderTitle')}</h2>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">{t('session.placeholderBody')}</p>
+          <h2 className="text-sm font-semibold">{t('root.workspace')}</h2>
+          <Link to="/app" className={buttonVariants({ className: 'mt-4 px-4' })}>{t('root.open')}</Link>
         </section>
         <div className="flex flex-col items-start justify-between gap-4 border-t pt-6 sm:flex-row sm:items-center">
           <p className="max-w-md text-sm leading-6 text-muted-foreground">{t('session.sharedDevice')}</p>

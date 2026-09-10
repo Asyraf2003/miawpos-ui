@@ -7,6 +7,7 @@ import { LoginPage } from '../presentation/auth/login-page'
 import { AccountPage } from '../presentation/shell/account-page'
 import { LocaleSelect } from '../presentation/shell/locale-select'
 import { OutcomeFeedback } from '../presentation/feedback/outcome-feedback'
+import { RootPage } from '../presentation/root/root-page'
 
 export function AppRouter() {
   const { principal, bootstrapping, bootstrapError, retryBootstrap } = useSession()
@@ -27,6 +28,7 @@ export function AppRouter() {
     <Route path="/" element={<Navigate to={principal ? '/account' : '/login'} replace />} />
     <Route path="/login" element={principal ? <Navigate to="/account" replace /> : <LoginPage />} />
     <Route path="/account" element={principal ? <AccountPage /> : <Navigate to="/login" replace />} />
+    {['/root/new', '/root/select', '/app', '/app/catalog/new', '/app/catalog/:itemId', '/app/sales/:saleId'].map(path => <Route key={path} path={path} element={principal ? <RootPage /> : <Navigate to="/login" replace />} />)}
     <Route path="*" element={<main className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center gap-5 px-5">
       <h1 className="text-2xl font-semibold">{t('notFound.title')}</h1><p className="text-muted-foreground">{t('notFound.body')}</p>
       <Link className="flex min-h-11 items-center text-sm underline underline-offset-4" to={principal ? '/account' : '/login'}>{t('notFound.back')}</Link>

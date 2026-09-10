@@ -47,11 +47,11 @@ export class BrowserSessionAdapter implements SessionPort {
     return this.#refreshFlight
   }
 
-  async #protected<T>(path: string, method: 'GET' | 'POST', decode: (value: unknown) => T): Promise<T> {
+  async request<T>(path: string, init: RequestInit, decode: (value: unknown) => T): Promise<T> {
     const epoch = this.#epoch
     const token = this.#accessToken
     const send = () => this.#http.request(path, {
-      method, headers: { Authorization: `Bearer ${this.#accessToken ?? ''}` },
+      ...init, headers: { ...init.headers, Authorization: `Bearer ${this.#accessToken ?? ''}` },
     }, decode)
     try {
       const result = await send()
@@ -79,7 +79,7 @@ export class BrowserSessionAdapter implements SessionPort {
   }
 
   async #principal(): Promise<SessionPrincipal> {
-    const dto = await this.#protected('/me', 'GET', decodeMe)
+    const dto = await this.request('/me', { method: 'GET' }, decodeMe)
     return {
       accountId: dto.account_id, sessionId: dto.session_id,
       roles: dto.roles, permissions: dto.permissions, trustLevel: dto.trust_level,
@@ -121,7 +121,7 @@ export class BrowserSessionAdapter implements SessionPort {
   }
 
   async logout() {
-    await this.#protected('/auth/browser/logout', 'POST', value => {
+    await this.request('/auth/browser/logout', { method: 'POST' }, value => {
       if (value !== undefined) contractError()
     })
     this.#clear()

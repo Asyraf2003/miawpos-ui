@@ -4,9 +4,11 @@ export type OutcomeCode =
   | 'validation.invalid_request' | 'validation.required' | 'validation.invalid_value'
   | 'network.unavailable' | 'request.failed'
   | 'system.unexpected_error' | 'system.contract_error'
+  | 'sale.pending' | 'sale.not_found' | 'sale.already_reversed' | 'sale.idempotency_conflict'
+  | 'payment.insufficient_cash' | 'catalog.item_not_found' | 'catalog.item_not_sellable'
 
 export interface FieldIssue {
-  path: 'email' | 'password'
+  path: 'email' | 'password' | 'name'
   code: 'validation.required' | 'validation.invalid_value'
 }
 

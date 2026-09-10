@@ -7,6 +7,8 @@ import { readLocale, saveLocale, type Locale } from '../adapters/localization/lo
 import { translate } from '../adapters/localization/translate'
 import { LocaleContext, SessionContext } from '../presentation/context'
 import { sessionKey, type Runtime } from './runtime'
+import { RootProvider } from './root-provider'
+import { WorkspacePorts } from '../presentation/workspace-ports'
 
 function SessionProvider({ runtime, children }: { runtime: Runtime; children: ReactNode }) {
   const session = useQuery({ queryKey: sessionKey, queryFn: () => bootstrapSession(runtime.session) })
@@ -30,16 +32,21 @@ function SessionProvider({ runtime, children }: { runtime: Runtime; children: Re
     bootstrapError: session.isError ? outcomeFrom(session.error) : null,
     notice, pending, googleLoginURL: runtime.googleLoginURL, logout,
     retryBootstrap: () => { void session.refetch() },
-  }}>{children}</SessionContext.Provider>
+  }}>{session.data ? <RootProvider key={session.data.sessionId} runtime={runtime}>{children}</RootProvider> : children}</SessionContext.Provider>
 }
 
 export function Providers({ runtime, children }: { runtime: Runtime; children: ReactNode }) {
   const [locale, updateLocale] = useState<Locale>(readLocale)
+  useEffect(() => {
+    const warn = (event: BeforeUnloadEvent) => { if (runtime.cash.hasPending()) event.preventDefault() }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [runtime])
   useEffect(() => { document.documentElement.lang = locale }, [locale])
   function setLocale(next: Locale) { saveLocale(next); updateLocale(next) }
   return <LocaleContext.Provider value={{ locale, setLocale, t: (key, params) => translate(locale, key, params) }}>
     <QueryClientProvider client={runtime.queryClient}>
-      <SessionProvider runtime={runtime}>{children}</SessionProvider>
+      <WorkspacePorts.Provider value={{ catalog: runtime.catalog, sales: runtime.sales, cash: runtime.cash }}><SessionProvider runtime={runtime}>{children}</SessionProvider></WorkspacePorts.Provider>
     </QueryClientProvider>
   </LocaleContext.Provider>
 }

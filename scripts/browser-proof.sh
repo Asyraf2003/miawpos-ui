@@ -24,7 +24,7 @@ createdb -h 127.0.0.1 -p 55437 -U miawpos_test miawpos_ui_proof
 export DATABASE_URL='postgres://miawpos_test@127.0.0.1:55437/miawpos_ui_proof?sslmode=disable'
 (cd "$api_dir" && bash scripts/db_migrate.sh) > "$proof_dir/migrate.log"
 (cd "$api_dir" && GOCACHE="${GOCACHE:-/tmp/go-build-cache}" go build -o "$proof_dir/api" ./cmd/api)
-export APP_ENV=testing HTTP_PORT=8081 AUTH_DEBUG_ENABLED=false BUSINESS_COMPONENTS=none
+export APP_ENV=testing HTTP_PORT=8081 AUTH_DEBUG_ENABLED=false BUSINESS_COMPONENTS=catalog.core,catalog.pricing,sales,payment.cash
 export AUTH_GOOGLE_CLIENT_ID=miawpos-browser-proof AUTH_GOOGLE_CLIENT_SECRET="$(openssl rand -hex 32)"
 export AUTH_GOOGLE_ISSUER=http://127.0.0.1:4184 AUTH_GOOGLE_REDIRECT_URL=https://localhost:4173/api/auth/google/callback
 node scripts/oidc-proof-server.mjs > "$proof_dir/oidc.log" 2>&1 &

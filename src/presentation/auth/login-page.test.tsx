@@ -14,6 +14,7 @@ function renderApp(options: { loggedOut?: boolean; path?: string; failLogout?: b
   let active = !options.loggedOut
   let refreshFails = false
   const fetcher = vi.fn<Fetch>(async path => {
+    if (String(path).endsWith('/roots')) return json({ success: true, data: [], meta: {} })
     if (String(path).endsWith('/me')) return json(meDto)
     if (String(path).endsWith('/logout')) {
       if (options.failLogout) return failure(500, 'internal_server_error')
@@ -47,7 +48,7 @@ describe('Google login and session presentation', () => {
     expect(screen.queryByText(/password|kata sandi|forgot|daftar|sign up/i)).not.toBeInTheDocument()
     const user = userEvent.setup()
     await user.click(screen.getByLabelText('Bahasa / Language'))
-    await user.click(screen.getByRole('option', { name: 'English' }))
+    await user.click(await screen.findByRole('option', { name: 'English' }))
     expect(screen.getByRole('link', { name: 'Continue with Google' })).toHaveAttribute('href', '/api/auth/browser/google/start')
     expect(screen.queryByText('Use your account to continue.')).not.toBeInTheDocument()
     expect(screen.queryByText('Account access · MiawPOS')).not.toBeInTheDocument()
@@ -67,7 +68,7 @@ describe('Google login and session presentation', () => {
     runtime.queryClient.setQueryData(['protected-example'], { private: 'remove-me' })
     const count = fetcher.mock.calls.length
     await user.click(screen.getByLabelText('Bahasa / Language'))
-    await user.click(screen.getByRole('option', { name: 'English' }))
+    await user.click(await screen.findByRole('option', { name: 'English' }))
     expect(screen.getByRole('heading', { name: 'Your account' })).toBeVisible()
     expect(fetcher).toHaveBeenCalledTimes(count)
     expect(document.documentElement.lang).toBe('en-US')

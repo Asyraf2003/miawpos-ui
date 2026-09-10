@@ -7,6 +7,13 @@ const codes: Record<string, OutcomeCode> = {
   authentication_required: 'auth.login_required', forbidden: 'access.denied',
   capability_disabled: 'capability.unavailable', invalid_request_body: 'validation.invalid_request',
   bad_request: 'validation.invalid_request', internal_server_error: 'system.unexpected_error',
+  root_access_denied: 'access.denied', root_name_required: 'validation.required', root_name_too_long: 'validation.invalid_value',
+  catalog_item_validation_failed: 'validation.invalid_request', catalog_pricing_inactive: 'capability.unavailable',
+  catalog_item_not_found: 'catalog.item_not_found', invalid_catalog_item_id: 'validation.invalid_value',
+  catalog_item_not_sellable: 'catalog.item_not_sellable', sale_not_found: 'sale.not_found',
+  sale_already_reversed: 'sale.already_reversed', idempotency_conflict: 'sale.idempotency_conflict',
+  money_overflow: 'system.contract_error', insufficient_cash_tender: 'payment.insufficient_cash',
+  invalid_quantity: 'validation.invalid_value', sale_validation_failed: 'validation.invalid_request', invalid_sale_id: 'validation.invalid_value',
 }
 
 export class ApiFailure extends OutcomeError {
@@ -24,7 +31,7 @@ export function isUnauthorized(error: unknown) {
 function fieldIssues(value: unknown): FieldIssue[] {
   if (!Array.isArray(value)) return []
   return value.filter((field): field is FieldIssue => record(field)
-    && (field.path === 'email' || field.path === 'password')
+    && (field.path === 'email' || field.path === 'password' || field.path === 'name')
     && (field.code === 'validation.required' || field.code === 'validation.invalid_value'))
     .map(({ path, code }) => ({ path, code }))
 }
