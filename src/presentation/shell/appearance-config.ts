@@ -23,12 +23,11 @@ export const fonts: Record<FontName, string> = {
   mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
 }
 
-// Deliberately wide jumps: this control is for density/readability, not a decorative 1px nudge.
-export const scales: Record<ScaleName, string> = {
-  s: '13px',
-  m: '16px',
-  l: '19px',
-  xl: '22px',
+export const scales: Record<ScaleName, { rootFontSize: string; label: string }> = {
+  s: { rootFontSize: '13px', label: '81%' },
+  m: { rootFontSize: '16px', label: '100%' },
+  l: { rootFontSize: '19px', label: '119%' },
+  xl: { rootFontSize: '22px', label: '138%' },
 }
 
 export const themes = {
