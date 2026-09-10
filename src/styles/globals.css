@@ -49,9 +49,12 @@
   color-scheme: light;
   --radius: 0.625rem;
 
-  /* Shell geometry uses rem so S/M/L/XL scales the whole composition, not just type. */
+  /* One proportional geometry system. S/M/L/XL changes the root rem and every token follows. */
+  --ui-control: 2.75rem;
+  --ui-logo: 2rem;
+  --ui-icon: 1rem;
   --shell-sidebar-expanded: 13.75rem;
-  --shell-sidebar-collapsed: max(2.75rem, 44px);
+  --shell-sidebar-collapsed: 3.25rem;
   --shell-content-max: 75rem;
   --shell-popover-width: 20rem;
   --shell-profile-width: 17.5rem;
@@ -91,7 +94,6 @@
   * { @apply border-border; }
   body { @apply m-0 bg-background font-sans text-foreground antialiased; }
   button, input, select, a { -webkit-tap-highlight-color: transparent; }
-  button { min-width: 44px; min-height: 44px; }
   button, select { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
