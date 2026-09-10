@@ -34,6 +34,15 @@ async function recoveredSession() {
   return userEvent.setup()
 }
 
+async function openAccountMenu(user: ReturnType<typeof userEvent.setup>, label: 'Menu pengguna' | 'User menu' = 'Menu pengguna') {
+  await user.click(screen.getByRole('button', { name: label }))
+}
+
+async function signOut(user: ReturnType<typeof userEvent.setup>, label: 'Keluar' | 'Sign out' = 'Keluar') {
+  await openAccountMenu(user, label === 'Sign out' ? 'User menu' : 'Menu pengguna')
+  await user.click(screen.getByRole('button', { name: label }))
+}
+
 describe('Google login and session presentation', () => {
   it('offers only Google navigation, with localized accessible text and no password lifecycle', async () => {
     const { fetcher } = renderApp({ loggedOut: true })
@@ -54,12 +63,14 @@ describe('Google login and session presentation', () => {
     expect(screen.queryByText('Account access · MiawPOS')).not.toBeInTheDocument()
     expect(fetcher.mock.calls.some(([path]) => String(path).includes('/manual/'))).toBe(false)
   })
+
   it('maps only the fixed callback failure marker to safe localized feedback', async () => {
     renderApp({ loggedOut: true, path: '/login?auth=failed&error_description=PRIVATE%20SERVER%20DETAIL' })
     expect(await screen.findByText('Belum dapat masuk')).toBeVisible()
     expect(screen.queryByText('PRIVATE SERVER DETAIL')).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Lanjutkan dengan Google' })).toBeVisible()
   })
+
   it('renders /me identity, switches locale without new auth requests, and clears cache on logout', async () => {
     const { runtime, fetcher } = renderApp()
     const user = await recoveredSession()
@@ -67,33 +78,40 @@ describe('Google login and session presentation', () => {
     expect(screen.getByText(meDto.account_id)).toBeVisible()
     runtime.queryClient.setQueryData(['protected-example'], { private: 'remove-me' })
     const count = fetcher.mock.calls.length
+
+    await openAccountMenu(user)
+    await user.click(screen.getByRole('button', { name: 'Pengaturan' }))
     await user.click(screen.getByLabelText('Bahasa / Language'))
     await user.click(await screen.findByRole('option', { name: 'English' }))
+
     expect(screen.getByRole('heading', { name: 'Your account' })).toBeVisible()
     expect(fetcher).toHaveBeenCalledTimes(count)
     expect(document.documentElement.lang).toBe('en-US')
-    await user.click(screen.getByRole('button', { name: 'Sign out' }))
+
+    await signOut(user, 'Sign out')
     expect(await screen.findByRole('heading', { name: 'Sign in to MiawPOS' })).toBeVisible()
     expect(screen.getByRole('status')).toHaveTextContent('You have signed out')
     expect(runtime.queryClient.getQueryData(['protected-example'])).toBeUndefined()
     expect(JSON.stringify(runtime.queryClient.getQueryCache().getAll())).not.toContain(authDto.access_token)
     expect(Object.keys(localStorage)).toEqual(['miawpos.locale'])
   })
+
   it('keeps the account visible and does not report success when revocation fails', async () => {
     renderApp({ failLogout: true })
     const user = await recoveredSession()
     await screen.findByRole('heading', { name: 'Akun Anda' })
-    await user.click(screen.getByRole('button', { name: 'Keluar' }))
+    await signOut(user)
     expect(await screen.findByText('Terjadi gangguan')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Akun Anda' })).toBeVisible()
     expect(screen.queryByText('Anda telah keluar')).not.toBeInTheDocument()
   })
+
   it('returns to login with expiration feedback and clears protected queries on refresh failure', async () => {
     const { runtime } = renderApp({ refreshFails: true })
     const user = await recoveredSession()
     await screen.findByRole('heading', { name: 'Akun Anda' })
     runtime.queryClient.setQueryData(['protected-example'], { private: 'remove-me' })
-    await user.click(screen.getByRole('button', { name: 'Keluar' }))
+    await signOut(user)
     expect(await screen.findByRole('heading', { name: 'Masuk ke MiawPOS' })).toBeVisible()
     expect(screen.getByText('Sesi telah berakhir')).toBeVisible()
     await waitFor(() => expect(runtime.queryClient.getQueryData(['protected-example'])).toBeUndefined())
