@@ -11,6 +11,20 @@ export async function login(page: Page) {
   await expect(page.getByRole('heading', { name: 'Akun Anda' })).toBeVisible()
 }
 
+export async function openAccountMenu(page: Page, label = 'Menu pengguna') {
+  await page.getByRole('button', { name: label, exact: true }).click()
+}
+
+export async function openAccountSettings(page: Page, menuLabel = 'Menu pengguna', settingsLabel = 'Pengaturan') {
+  await openAccountMenu(page, menuLabel)
+  await page.getByRole('button', { name: settingsLabel, exact: true }).click()
+}
+
+export async function signOut(page: Page, menuLabel = 'Menu pengguna', signOutLabel = 'Keluar') {
+  await openAccountMenu(page, menuLabel)
+  await page.getByRole('button', { name: signOutLabel, exact: true }).click()
+}
+
 export async function checkStorage(page: Page) {
   const browser = await page.evaluate(() => ({
     localKeys: Object.keys(localStorage), sessionKeys: Object.keys(sessionStorage), cookies: document.cookie,
