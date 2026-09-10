@@ -49,9 +49,9 @@
   color-scheme: light;
   --radius: 0.625rem;
 
-  /* One proportional geometry system. Root rem is the only scale dial. */
-  --ui-control: 2.75rem;
-  --ui-row: 2.75rem;
+  /* One proportional geometry system. Root rem is the scale dial, but interaction targets never shrink below the accepted 44 CSS px floor. */
+  --ui-control: max(2.75rem, 44px);
+  --ui-row: max(2.75rem, 44px);
   --ui-logo: 2rem;
   --ui-icon: 1.125rem;
   --shell-header: 3.5rem;
@@ -96,6 +96,9 @@
 @layer base {
   * { @apply border-border; }
   body { @apply m-0 bg-background font-sans text-foreground antialiased; }
+  /* Appearance scaling may reduce rem geometry, but accessibility-sized interaction areas remain absolute CSS-pixel floors. */
+  button, input, select, a, [role="option"] { min-height: 44px; }
+  button { min-width: 44px; }
   button, input, select, a { -webkit-tap-highlight-color: transparent; }
   button, select { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
