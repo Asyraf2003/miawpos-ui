@@ -126,7 +126,7 @@ export function AccountPage() {
   if (!principal) return null
 
   const compactLabelClass = collapsed ? 'md:hidden' : ''
-  const iconButton = 'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground'
+  const controlClass = 'flex min-h-[var(--ui-control)] min-w-[var(--ui-control)] items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground'
 
   const toggleNavigation = () => {
     if (window.matchMedia('(max-width: 767px)').matches) {
@@ -152,9 +152,9 @@ export function AccountPage() {
           aria-label="MiawPOS"
           title={collapsed ? 'MiawPOS' : undefined}
           onClick={() => setMobileOpen(false)}
-          className={`flex min-h-[44px] w-full items-center gap-2 rounded-md px-1.5 hover:bg-accent ${collapsed ? 'md:w-[44px] md:justify-center md:gap-0 md:px-0' : ''}`}
+          className={`flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md px-1.5 transition-colors hover:bg-accent ${collapsed ? 'md:w-[var(--ui-control)] md:justify-center md:gap-0 md:px-0' : ''}`}
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"><Cat className="size-4" aria-hidden="true" /></span>
+          <span className="flex size-[var(--ui-logo)] shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"><Cat className="size-[var(--ui-icon)]" aria-hidden="true" /></span>
           <span className={`truncate text-sm font-semibold tracking-tight ${compactLabelClass}`}>MiawPOS</span>
         </Link>
       </div>
@@ -165,9 +165,9 @@ export function AccountPage() {
           aria-label={text.search}
           title={collapsed ? text.search : undefined}
           onClick={() => { setSearchOpen(true); setPanel(null); setMobileOpen(false) }}
-          className={`flex min-h-[44px] items-center gap-2 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground ${collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''}`}
+          className={`flex min-h-[var(--ui-control)] items-center gap-2 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground ${collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''}`}
         >
-          <Search className="size-4 shrink-0" aria-hidden="true" />
+          <Search className="size-[var(--ui-icon)] shrink-0" aria-hidden="true" />
           <span className={compactLabelClass}>{text.search}</span>
         </button>
 
@@ -178,9 +178,9 @@ export function AccountPage() {
             aria-current="page"
             title={collapsed ? text.dashboard : undefined}
             onClick={() => setMobileOpen(false)}
-            className={`flex min-h-[44px] items-center gap-2 rounded-md bg-primary/10 px-2 text-sm font-medium text-foreground ${collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''}`}
+            className={`flex min-h-[var(--ui-control)] items-center gap-2 rounded-md bg-primary/10 px-2 text-sm font-medium text-foreground ${collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''}`}
           >
-            <LayoutDashboard className="size-4 shrink-0" aria-hidden="true" />
+            <LayoutDashboard className="size-[var(--ui-icon)] shrink-0" aria-hidden="true" />
             <span className={compactLabelClass}>{text.dashboard}</span>
           </Link>
         </nav>
@@ -191,51 +191,51 @@ export function AccountPage() {
       <header className="sticky top-0 z-20 border-b bg-background">
         <div className="flex min-h-14 items-center gap-1 px-2 sm:px-4">
           <HeaderActionHint label={collapsed ? text.expand : text.collapse}>
-            <button type="button" aria-label={text.navigation} onClick={toggleNavigation} className={iconButton}>
-              <Menu className="size-4 lg:hidden" aria-hidden="true" />
-              {collapsed ? <ChevronRight className="hidden size-4 lg:block" aria-hidden="true" /> : <ChevronLeft className="hidden size-4 lg:block" aria-hidden="true" />}
+            <button type="button" aria-label={text.navigation} onClick={toggleNavigation} className={controlClass}>
+              <Menu className="size-[var(--ui-icon)] lg:hidden" aria-hidden="true" />
+              {collapsed ? <ChevronRight className="hidden size-[var(--ui-icon)] lg:block" aria-hidden="true" /> : <ChevronLeft className="hidden size-[var(--ui-icon)] lg:block" aria-hidden="true" />}
             </button>
           </HeaderActionHint>
           <div className="flex-1" />
 
           <div className="relative flex items-center gap-0.5">
             <HeaderActionHint label={text.notifications}>
-              <button type="button" aria-label={text.notifications} aria-expanded={panel === 'notifications'} onClick={() => togglePanel('notifications')} className={`${iconButton} relative`}>
-                <Bell className="size-4" aria-hidden="true" />
-                <span className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-primary" />
+              <button type="button" aria-label={text.notifications} aria-expanded={panel === 'notifications'} onClick={() => togglePanel('notifications')} className={`${controlClass} relative`}>
+                <Bell className="size-[var(--ui-icon)]" aria-hidden="true" />
+                <span className="absolute right-[0.625rem] top-[0.625rem] size-1.5 rounded-full bg-primary" />
               </button>
             </HeaderActionHint>
             <HeaderActionHint label={mode === 'light' ? text.darkMode : text.lightMode}>
-              <button type="button" aria-label={mode === 'light' ? text.darkMode : text.lightMode} onClick={() => setMode(value => value === 'light' ? 'dark' : 'light')} className={iconButton}>
-                {mode === 'light' ? <Sun className="size-4" aria-hidden="true" /> : <Moon className="size-4" aria-hidden="true" />}
+              <button type="button" aria-label={mode === 'light' ? text.darkMode : text.lightMode} onClick={() => setMode(value => value === 'light' ? 'dark' : 'light')} className={controlClass}>
+                {mode === 'light' ? <Sun className="size-[var(--ui-icon)]" aria-hidden="true" /> : <Moon className="size-[var(--ui-icon)]" aria-hidden="true" />}
               </button>
             </HeaderActionHint>
             <HeaderActionHint label={text.appearance}>
-              <button type="button" aria-label={text.appearance} aria-expanded={panel === 'appearance'} onClick={() => togglePanel('appearance')} className={iconButton}><Palette className="size-4" aria-hidden="true" /></button>
+              <button type="button" aria-label={text.appearance} aria-expanded={panel === 'appearance'} onClick={() => togglePanel('appearance')} className={controlClass}><Palette className="size-[var(--ui-icon)]" aria-hidden="true" /></button>
             </HeaderActionHint>
             <HeaderActionHint label={text.profile}>
-              <button type="button" aria-label={text.profile} aria-expanded={panel === 'profile' || panel === 'settings'} onClick={() => togglePanel('profile')} className="ml-1 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-colors hover:bg-accent"><span className="flex size-8 items-center justify-center rounded-full border bg-muted"><UserRound className="size-4" aria-hidden="true" /></span></button>
+              <button type="button" aria-label={text.profile} aria-expanded={panel === 'profile' || panel === 'settings'} onClick={() => togglePanel('profile')} className="ml-1 flex min-h-[var(--ui-control)] min-w-[var(--ui-control)] items-center justify-center rounded-full transition-colors hover:bg-accent"><span className="flex size-[var(--ui-logo)] items-center justify-center rounded-full border bg-muted"><UserRound className="size-[var(--ui-icon)]" aria-hidden="true" /></span></button>
             </HeaderActionHint>
 
             {panel === 'notifications' && <div className="absolute right-0 top-[calc(100%+0.5rem)] w-[min(var(--shell-popover-width),calc(100vw-1rem))] rounded-lg border bg-popover p-2 shadow-lg">
-              <div className="flex items-center justify-between px-2 py-1.5"><p className="text-sm font-semibold">{text.notifications}</p><button type="button" aria-label={text.close} onClick={() => setPanel(null)} className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md hover:bg-accent"><X className="size-4" /></button></div>
-              <div className="flex gap-3 rounded-md bg-muted/60 p-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"><Cat className="size-4" /></span><div><p className="text-sm font-medium">{text.welcome}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{text.welcomeBody}</p></div></div>
+              <div className="flex items-center justify-between px-2 py-1.5"><p className="text-sm font-semibold">{text.notifications}</p><button type="button" aria-label={text.close} onClick={() => setPanel(null)} className={`${controlClass} shrink-0`}><X className="size-[var(--ui-icon)]" /></button></div>
+              <div className="flex gap-3 rounded-md bg-muted/60 p-3"><span className="flex size-[var(--ui-logo)] shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"><Cat className="size-[var(--ui-icon)]" /></span><div><p className="text-sm font-medium">{text.welcome}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{text.welcomeBody}</p></div></div>
             </div>}
 
             {panel === 'profile' && <div className="absolute right-0 top-[calc(100%+0.5rem)] w-[min(var(--shell-profile-width),calc(100vw-1rem))] rounded-lg border bg-popover p-1.5 shadow-lg">
               <div className="px-3 py-2.5"><p className="text-sm font-semibold">{text.account}</p><p className="mt-1 break-all font-mono text-[0.6875rem] leading-5 text-muted-foreground">{principal.accountId}</p></div>
               <div className="border-t pt-1.5">
-                <Link to="/app" onClick={() => setPanel(null)} className="flex min-h-[44px] items-center gap-2 rounded-md px-3 text-sm hover:bg-accent"><LayoutDashboard className="size-4 text-muted-foreground" />{text.openWorkspace}</Link>
-                <button type="button" onClick={() => setPanel('settings')} className="flex min-h-[44px] w-full items-center gap-2 rounded-md px-3 text-left text-sm hover:bg-accent"><Settings2 className="size-4 text-muted-foreground" />{text.settings}</button>
-                <button type="button" disabled={pending} onClick={() => { void logout() }} className="flex min-h-[44px] w-full items-center gap-2 rounded-md px-3 text-left text-sm text-destructive hover:bg-destructive/10 disabled:opacity-50"><LogOut className="size-4" />{t(pending ? 'session.loggingOut' : 'session.logout')}</button>
+                <Link to="/app" onClick={() => setPanel(null)} className="flex min-h-[var(--ui-control)] items-center gap-2 rounded-md px-3 text-sm hover:bg-accent"><LayoutDashboard className="size-[var(--ui-icon)] text-muted-foreground" />{text.openWorkspace}</Link>
+                <button type="button" onClick={() => setPanel('settings')} className="flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md px-3 text-left text-sm hover:bg-accent"><Settings2 className="size-[var(--ui-icon)] text-muted-foreground" />{text.settings}</button>
+                <button type="button" disabled={pending} onClick={() => { void logout() }} className="flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md px-3 text-left text-sm text-destructive hover:bg-destructive/10 disabled:opacity-50"><LogOut className="size-[var(--ui-icon)]" />{t(pending ? 'session.loggingOut' : 'session.logout')}</button>
               </div>
             </div>}
 
             {panel === 'settings' && <div className="absolute right-0 top-[calc(100%+0.5rem)] w-[min(var(--shell-popover-width),calc(100vw-1rem))] rounded-lg border bg-popover p-2 shadow-lg">
               <div className="flex items-center gap-2 px-1 pb-2">
-                <button type="button" aria-label={text.back} onClick={() => setPanel('profile')} className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-md hover:bg-accent"><ChevronLeft className="size-4" /></button>
+                <button type="button" aria-label={text.back} onClick={() => setPanel('profile')} className={`${controlClass} shrink-0`}><ChevronLeft className="size-[var(--ui-icon)]" /></button>
                 <div className="min-w-0"><p className="text-sm font-semibold">{text.settings}</p><p className="truncate text-xs text-muted-foreground">{text.settingsBody}</p></div>
-                <button type="button" aria-label={text.close} onClick={() => setPanel(null)} className="ml-auto flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-md hover:bg-accent"><X className="size-4" /></button>
+                <button type="button" aria-label={text.close} onClick={() => setPanel(null)} className={`${controlClass} ml-auto shrink-0`}><X className="size-[var(--ui-icon)]" /></button>
               </div>
               <div className="rounded-md border bg-background p-3"><p className="mb-2 text-xs font-medium text-muted-foreground">{text.language}</p><LocaleSelect /></div>
             </div>}
@@ -265,7 +265,7 @@ export function AccountPage() {
           <div className="flex min-h-[var(--shell-card-min)] flex-col rounded-lg border bg-card p-4 sm:col-span-2 lg:col-span-1">
             <p className="text-xs font-medium text-muted-foreground">{text.workspace}</p>
             <p className="mt-3 text-xl font-semibold">{t('root.workspace')}</p>
-            <div className="mt-auto pt-5"><Link to="/app" className={buttonVariants({ className: 'min-h-[44px] px-4' })}>{text.openWorkspace}</Link></div>
+            <div className="mt-auto pt-5"><Link to="/app" className={buttonVariants({ className: 'min-h-[var(--ui-control)] px-4' })}>{text.openWorkspace}</Link></div>
           </div>
           {[0, 1, 2].map(slot => <div key={slot} className="flex min-h-[var(--shell-card-ghost-min)] flex-col items-center justify-center rounded-lg border border-dashed bg-muted/15 px-5 text-center"><div className="mb-3 size-7 rounded-md border bg-muted/50" /><p className="text-xs font-medium text-muted-foreground">{text.slot}</p><p className="mt-1 text-[0.6875rem] text-muted-foreground/70">{text.empty}</p></div>)}
         </section>
@@ -273,19 +273,19 @@ export function AccountPage() {
     </div>
 
     {panel === 'appearance' && <aside aria-label={text.appearance} className="fixed inset-y-0 right-0 z-50 w-[min(var(--shell-drawer-width),100vw)] overflow-y-auto border-l bg-popover shadow-xl">
-      <div className="flex items-start justify-between border-b px-4 py-4"><div><h2 className="text-base font-semibold">{text.appearance}</h2><p className="mt-1 text-xs text-muted-foreground">{text.appearanceBody}</p></div><button type="button" aria-label={text.close} onClick={() => setPanel(null)} className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md hover:bg-accent"><X className="size-4" /></button></div>
+      <div className="flex items-start justify-between border-b px-4 py-4"><div><h2 className="text-base font-semibold">{text.appearance}</h2><p className="mt-1 text-xs text-muted-foreground">{text.appearanceBody}</p></div><button type="button" aria-label={text.close} onClick={() => setPanel(null)} className={`${controlClass} shrink-0`}><X className="size-[var(--ui-icon)]" /></button></div>
       <div className="space-y-5 p-4">
-        <section><p className="mb-2 text-xs font-medium">{text.palette}</p><div className="grid grid-cols-[repeat(auto-fit,minmax(44px,1fr))] gap-2">{(Object.keys(palettes) as PaletteName[]).map(value => <button key={value} type="button" aria-label={value} aria-pressed={palette === value} onClick={() => setPalette(value)} className="relative flex min-h-[44px] items-center justify-center rounded-md border bg-background"><span className="size-4 rounded-full border border-black/10" style={{ backgroundColor: palettes[value].swatch }} />{palette === value && <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-foreground text-background"><Check className="size-2.5" /></span>}</button>)}</div></section>
-        <section><p className="mb-2 text-xs font-medium">{text.font}</p><div className="grid grid-cols-3 gap-2">{(['system', 'serif', 'mono'] as FontName[]).map(value => <button key={value} type="button" aria-pressed={font === value} onClick={() => setFont(value)} className={`min-h-[44px] rounded-md border px-2 text-xs font-medium ${font === value ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{value}</button>)}</div></section>
-        <section><div className="mb-2 flex items-center justify-between"><p className="text-xs font-medium">{text.scale}</p><span className="text-[0.6875rem] text-muted-foreground">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => scales[value].label).join(' · ')}</span></div><div className="grid grid-cols-4 gap-2">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => <button key={value} type="button" aria-pressed={scale === value} onClick={() => setScale(value)} className={`min-h-[44px] rounded-md border text-xs font-semibold uppercase ${scale === value ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{value}</button>)}</div></section>
-        <section><p className="mb-2 text-xs font-medium">{text.colorScheme}</p><div className="grid grid-cols-2 gap-2"><button type="button" aria-pressed={mode === 'light'} onClick={() => setMode('light')} className={`min-h-[44px] rounded-md border text-xs font-medium ${mode === 'light' ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{id ? 'Terang' : 'Light'}</button><button type="button" aria-pressed={mode === 'dark'} onClick={() => setMode('dark')} className={`min-h-[44px] rounded-md border text-xs font-medium ${mode === 'dark' ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{id ? 'Gelap' : 'Dark'}</button></div></section>
+        <section><p className="mb-2 text-xs font-medium">{text.palette}</p><div className="grid grid-cols-[repeat(auto-fit,minmax(var(--ui-control),1fr))] gap-2">{(Object.keys(palettes) as PaletteName[]).map(value => <button key={value} type="button" aria-label={value} aria-pressed={palette === value} onClick={() => setPalette(value)} className="relative flex aspect-square w-full items-center justify-center rounded-md border bg-background"><span className="size-[var(--ui-icon)] rounded-full border border-black/10" style={{ backgroundColor: palettes[value].swatch }} />{palette === value && <span className="absolute -right-1 -top-1 flex size-[var(--ui-icon)] items-center justify-center rounded-full bg-foreground text-background"><Check className="size-[0.625rem]" /></span>}</button>)}</div></section>
+        <section><p className="mb-2 text-xs font-medium">{text.font}</p><div className="grid grid-cols-3 gap-2">{(['system', 'serif', 'mono'] as FontName[]).map(value => <button key={value} type="button" aria-pressed={font === value} onClick={() => setFont(value)} className={`min-h-[var(--ui-control)] rounded-md border px-2 text-xs font-medium ${font === value ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{value}</button>)}</div></section>
+        <section><div className="mb-2 flex items-center justify-between"><p className="text-xs font-medium">{text.scale}</p><span className="text-[0.6875rem] text-muted-foreground">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => scales[value].label).join(' · ')}</span></div><div className="grid grid-cols-4 gap-2">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => <button key={value} type="button" aria-pressed={scale === value} onClick={() => setScale(value)} className={`min-h-[var(--ui-control)] rounded-md border text-xs font-semibold uppercase ${scale === value ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{value}</button>)}</div></section>
+        <section><p className="mb-2 text-xs font-medium">{text.colorScheme}</p><div className="grid grid-cols-2 gap-2"><button type="button" aria-pressed={mode === 'light'} onClick={() => setMode('light')} className={`min-h-[var(--ui-control)] rounded-md border text-xs font-medium ${mode === 'light' ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{id ? 'Terang' : 'Light'}</button><button type="button" aria-pressed={mode === 'dark'} onClick={() => setMode('dark')} className={`min-h-[var(--ui-control)] rounded-md border text-xs font-medium ${mode === 'dark' ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{id ? 'Gelap' : 'Dark'}</button></div></section>
       </div>
     </aside>}
 
     {searchOpen && <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/20 px-4 pt-[16vh] backdrop-blur-[0.1875rem]" role="dialog" aria-modal="true" aria-labelledby="miawpos-search-title">
       <div className="w-full max-w-[var(--shell-command-width)] overflow-hidden rounded-lg border bg-popover shadow-xl">
-        <div className="flex items-center gap-2 border-b px-3"><Search className="size-4 text-muted-foreground" /><input autoFocus aria-label={text.searchTitle} placeholder={text.searchPlaceholder} className="min-h-12 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" /><button type="button" aria-label={text.close} onClick={() => setSearchOpen(false)} className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md hover:bg-accent"><X className="size-4" /></button></div>
-        <button type="button" onClick={() => setSearchOpen(false)} className="flex min-h-[44px] w-full items-center gap-2 px-3 text-left text-sm hover:bg-accent"><LayoutDashboard className="size-4 text-muted-foreground" /><span>{text.dashboard}</span></button>
+        <div className="flex items-center gap-2 border-b px-3"><Search className="size-[var(--ui-icon)] text-muted-foreground" /><input autoFocus aria-label={text.searchTitle} placeholder={text.searchPlaceholder} className="min-h-12 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" /><button type="button" aria-label={text.close} onClick={() => setSearchOpen(false)} className={`${controlClass} shrink-0`}><X className="size-[var(--ui-icon)]" /></button></div>
+        <button type="button" onClick={() => setSearchOpen(false)} className="flex min-h-[var(--ui-control)] w-full items-center gap-2 px-3 text-left text-sm hover:bg-accent"><LayoutDashboard className="size-[var(--ui-icon)] text-muted-foreground" /><span>{text.dashboard}</span></button>
         <p id="miawpos-search-title" className="border-t px-3 py-2 text-[0.6875rem] text-muted-foreground">{text.searchBody}</p>
       </div>
     </div>}
