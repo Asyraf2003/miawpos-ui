@@ -48,6 +48,18 @@
 :root {
   color-scheme: light;
   --radius: 0.625rem;
+
+  /* Shell geometry uses rem so S/M/L/XL scales the whole composition, not just type. */
+  --shell-sidebar-expanded: 13.75rem;
+  --shell-sidebar-collapsed: max(2.75rem, 44px);
+  --shell-content-max: 75rem;
+  --shell-popover-width: 20rem;
+  --shell-profile-width: 17.5rem;
+  --shell-drawer-width: 21.25rem;
+  --shell-command-width: 32.5rem;
+  --shell-card-min: 9.375rem;
+  --shell-card-ghost-min: 11.25rem;
+
   --background: #ffffff;
   --foreground: #18181b;
   --card: #ffffff;
