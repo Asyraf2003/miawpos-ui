@@ -20,6 +20,7 @@ export function RootPage() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [pending, setPending] = useState(false)
+  const [uncertain, setUncertain] = useState(false)
   const busy = useRef(false)
   const live = useRef(true)
   useEffect(() => { live.current = true; return () => { live.current = false } }, [])
@@ -33,10 +34,16 @@ export function RootPage() {
   }
   async function submit(event: React.FormEvent) {
     event.preventDefault()
-    if (busy.current) return
+    if (busy.current || uncertain) return
     busy.current = true; setPending(true); setNotice(null)
     try { await root.create(name); if (live.current) navigate('/app', { replace: true }) }
-    catch (error) { if (live.current) setNotice(outcomeFrom(error)) }
+    catch (error) {
+      if (live.current) {
+        const value = outcomeFrom(error)
+        setNotice(value)
+        setUncertain(!['validation.required', 'validation.invalid_value', 'validation.invalid_request', 'access.denied'].includes(value.code))
+      }
+    }
     finally { busy.current = false; if (live.current) setPending(false) }
   }
   return <div className="min-h-dvh bg-muted/30">
@@ -49,9 +56,9 @@ export function RootPage() {
           <form onSubmit={event => { void submit(event) }} className="space-y-5">
             <div className="space-y-2"><label htmlFor="root-name" className="text-sm font-medium">{t('root.name')}</label><Input id="root-name" value={name} onChange={event => setName(event.target.value)} required disabled={pending} aria-describedby="root-name-help" /><p id="root-name-help" className="text-xs text-muted-foreground">{t('root.nameHelp')}</p></div>
             <OutcomeFeedback value={notice} />
-            <Button type="submit" disabled={pending} className="px-4">{t(pending ? 'root.creating' : 'root.create')}</Button>
+            <Button type="submit" disabled={pending || uncertain} className="h-auto whitespace-normal px-4 py-3">{t(pending ? 'root.creating' : 'root.create')}</Button>
           </form>
-          {notice && <Button variant="outline" onClick={root.refresh}>{t('root.check')}</Button>}
+          {notice && <Button variant="outline" className="h-auto whitespace-normal px-4 py-3" onClick={() => { setUncertain(false); setNotice(null); root.refresh() }}>{t('root.check')}</Button>}
         </section> : selecting ? <section className="space-y-5">
           <h1 className="text-2xl font-semibold">{t('root.select')}</h1>
           <div className="grid gap-3 sm:grid-cols-2">{root.roots.map(item => <Button key={item.id} variant="outline" className="h-auto justify-start whitespace-normal break-words p-5 text-left" onClick={() => { root.select(item.id); navigate('/app', { replace: true }) }}>{item.name}</Button>)}</div>

@@ -33,7 +33,7 @@ export function LocaleSelect() {
             {localeOptions.map(option => <Select.Item
               key={option.value}
               value={option.value}
-              className="grid min-h-10 cursor-default grid-cols-[1fr_auto] items-center gap-3 rounded-lg px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[selected]:font-medium"
+              className="grid min-h-11 cursor-default grid-cols-[1fr_auto] items-center gap-3 rounded-lg px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[selected]:font-medium"
             >
               <Select.ItemText>{option.label}</Select.ItemText>
               <Select.ItemIndicator className="flex items-center text-foreground">

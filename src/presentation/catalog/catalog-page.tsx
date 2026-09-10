@@ -37,7 +37,7 @@ export function CatalogPage({ rootId }: { rootId: string }) {
     <h2 className="text-xl font-semibold">{t('catalog.detail')}</h2>
     {item.isFetching ? <p role="status">{t('catalog.loading')}</p> : item.isError ? <><OutcomeFeedback value={outcomeFrom(item.error)} /><Button onClick={() => { void item.refetch() }}>{t('action.retry')}</Button></> : item.data ? <>
       <h3 className="break-words text-lg font-medium">{item.data.name}</h3>
-      <p className="font-semibold tabular-nums">{item.data.priceRupiah === null ? t('catalog.unpriced') : new Intl.NumberFormat(locale, { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(item.data.priceRupiah)}</p>
+      <p className="break-words font-semibold tabular-nums">{item.data.priceRupiah === null ? t('catalog.unpriced') : new Intl.NumberFormat(locale, { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(item.data.priceRupiah)}</p>
       <Link to="/app/catalog/new" className={buttonVariants({ variant: 'outline', className: 'px-4' })}>{t('catalog.new')}</Link>
       {item.data.priceRupiah !== null && <CashForm key={item.data.id} item={item.data} />}
     </> : null}

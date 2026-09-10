@@ -22,8 +22,12 @@ export async function checkStorage(page: Page) {
 
 export async function checkLayout(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  for (const control of await page.locator('button:visible, input:visible:not([aria-hidden="true"]), select:visible, nav a:visible, [data-slot="button"]:visible').all()) {
-    const box = await control.boundingBox()
-    expect(!!box && box.width >= 44 && box.height >= 44).toBe(true)
+  for (const control of await page.locator('button:visible, input:visible:not([aria-hidden="true"]), select:visible, nav a:visible, [role="option"]:visible, [data-slot="button"]:visible').all()) {
+    const target = await control.evaluate(element => ({ tag: element.tagName, role: element.getAttribute('role'), ariaHidden: element.getAttribute('aria-hidden'), width: element.getBoundingClientRect().width, height: element.getBoundingClientRect().height }))
+    // Allow entrance motion to settle without relaxing the 44px minimum.
+    await expect.poll(async () => {
+      const box = await control.boundingBox()
+      return !!box && box.width >= 44 && box.height >= 44
+    }, { message: JSON.stringify(target) }).toBe(true)
   }
 }

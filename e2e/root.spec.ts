@@ -32,11 +32,19 @@ test('human ROOT → catalog/pricing → Cash retry/readback → reversal → lo
   await page.screenshot({ path: 'test-results/tablet-catalog.png', fullPage: true })
   // Drop the response AFTER the real server commits, then retry the same intent.
   const keys: string[] = []
+  let committedSaleId: string | undefined
   await page.route('**/api/roots/*/sales', async route => {
     keys.push(route.request().headers()['idempotency-key'] ?? '')
     const response = await route.fetch()
-    if (keys.length === 1) await route.abort('failed')
-    else await route.fulfill({ response })
+    if (keys.length === 1) {
+      expect(response.status()).toBe(201)
+      committedSaleId = (await response.json()).data.id
+      await route.abort('failed')
+    } else {
+      expect(response.status()).toBe(200)
+      expect((await response.json()).data.id).toBe(committedSaleId)
+      await route.fulfill({ response })
+    }
   })
   await page.getByLabel('Jumlah', { exact: true }).fill('2')
   await page.getByLabel('Uang diterima (Rupiah)').fill('50000')

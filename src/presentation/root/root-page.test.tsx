@@ -8,12 +8,14 @@ import { createRuntime } from '../../app/runtime'
 import { authDto, meDto, json, failure } from '../../test/fixtures'
 
 const one = { id: 'one', name: 'Toko Satu', primary_owner_account_id: 'owner', created_at: '2026-09-10T00:00:00Z' }
-function app(roots: unknown[], fail = false) {
+function app(roots: unknown[], fail = false, lostCreate = false) {
   localStorage.setItem('miawpos.locale', 'id-ID')
+  let created = false
   const runtime = createRuntime(async (path, init) => {
     if (String(path).endsWith('/roots')) {
       if (fail) return failure(403, 'root_access_denied')
-      return json({ success: true, data: init?.method === 'POST' ? one : roots, meta: {} })
+      if (init?.method === 'POST' && lostCreate) { created = true; throw new TypeError('lost response') }
+      return json({ success: true, data: init?.method === 'POST' ? one : created ? [one] : roots, meta: {} })
     }
     return json(String(path).endsWith('/me') ? meDto : authDto)
   })
@@ -21,6 +23,15 @@ function app(roots: unknown[], fail = false) {
   return { runtime, user: userEvent.setup() }
 }
 describe('human ROOT context', () => {
+  it('requires a list read after uncertain creation instead of allowing a duplicate first ROOT', async () => {
+    const { user } = app([], false, true)
+    await user.type(await screen.findByLabelText('Nama ruang usaha'), 'Toko Satu')
+    await user.click(screen.getByRole('button', { name: 'Buat ruang usaha' }))
+    expect(await screen.findByText('Tidak dapat terhubung')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Buat ruang usaha' })).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: 'Periksa ruang usaha yang sudah dibuat' }))
+    expect(await screen.findByRole('heading', { name: 'Toko Satu' })).toBeVisible()
+  })
   it('creates the first ROOT and opens the returned context', async () => {
     const { user } = app([])
     await screen.findByRole('heading', { name: 'Buat ruang usaha pertama' })

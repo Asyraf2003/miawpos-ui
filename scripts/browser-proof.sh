@@ -23,6 +23,8 @@ pg_ctl -D "$proof_dir/pg" -l "$proof_dir/postgres.log" -o "-h 127.0.0.1 -p 55437
 createdb -h 127.0.0.1 -p 55437 -U miawpos_test miawpos_ui_proof
 export DATABASE_URL='postgres://miawpos_test@127.0.0.1:55437/miawpos_ui_proof?sslmode=disable'
 (cd "$api_dir" && bash scripts/db_migrate.sh) > "$proof_dir/migrate.log"
+# Reuse the backend-owned bounded authority/financial checks on this database.
+(cd "$api_dir" && bash scripts/audit_security_integration.sh)
 (cd "$api_dir" && GOCACHE="${GOCACHE:-/tmp/go-build-cache}" go build -o "$proof_dir/api" ./cmd/api)
 export APP_ENV=testing HTTP_PORT=8081 AUTH_DEBUG_ENABLED=false BUSINESS_COMPONENTS=catalog.core,catalog.pricing,sales,payment.cash
 export AUTH_GOOGLE_CLIENT_ID=miawpos-browser-proof AUTH_GOOGLE_CLIENT_SECRET="$(openssl rand -hex 32)"
