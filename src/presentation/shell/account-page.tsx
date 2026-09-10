@@ -9,6 +9,7 @@ import {
   CircleCheck,
   LayoutDashboard,
   LogOut,
+  Menu,
   Moon,
   Palette,
   Search,
@@ -22,7 +23,7 @@ import { useLocale, useSession } from '../context'
 import { OutcomeFeedback } from '../feedback/outcome-feedback'
 import { LocaleSelect } from './locale-select'
 
-type Panel = 'notifications' | 'appearance' | 'profile' | null
+type Panel = 'notifications' | 'appearance' | 'profile' | 'settings' | null
 type PaletteName = 'neutral' | 'blue' | 'green' | 'amber' | 'rose'
 type FontName = 'system' | 'serif' | 'mono'
 type ScaleName = 's' | 'm' | 'l' | 'xl'
@@ -62,7 +63,8 @@ export function AccountPage() {
   const { locale, t } = useLocale()
   const { principal, logout, notice, pending } = useSession()
   const id = locale === 'id-ID'
-  const [collapsed, setCollapsed] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768)
+  const [collapsed, setCollapsed] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1200)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [panel, setPanel] = useState<Panel>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [mode, setMode] = useState<'light' | 'dark'>('light')
@@ -83,6 +85,9 @@ export function AccountPage() {
     searchTitle: id ? 'Cari di MiawPOS' : 'Search MiawPOS', searchPlaceholder: id ? 'Cari halaman atau fitur…' : 'Search pages or features…',
     searchBody: id ? 'Untuk pass ini, Search baru berupa shell presentasi.' : 'For this pass, Search is only a presentation shell.',
     collapse: id ? 'Padatkan sidebar' : 'Collapse sidebar', expand: id ? 'Lebarkan sidebar' : 'Expand sidebar', close: id ? 'Tutup' : 'Close',
+    navigation: id ? 'Navigasi' : 'Navigation', back: id ? 'Kembali ke akun' : 'Back to account', language: id ? 'Bahasa' : 'Language',
+    settingsBody: id ? 'Preferensi aplikasi yang bukan bagian dari tema.' : 'Application preferences that are separate from appearance.',
+    darkMode: id ? 'Tema gelap' : 'Dark mode', lightMode: id ? 'Tema terang' : 'Light mode',
   }
 
   useEffect(() => {
@@ -90,7 +95,7 @@ export function AccountPage() {
       if (event.key !== 'Escape') return
       setPanel(null)
       setSearchOpen(false)
-      if (window.innerWidth < 768) setCollapsed(true)
+      setMobileOpen(false)
     }
     window.addEventListener('keydown', onEscape)
     return () => window.removeEventListener('keydown', onEscape)
@@ -114,66 +119,116 @@ export function AccountPage() {
 
   const togglePanel = (next: Exclude<Panel, null>) => setPanel(current => current === next ? null : next)
   const iconButton = 'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground'
+  const compactLabelClass = collapsed ? 'md:hidden' : ''
+
+  const toggleNavigation = () => {
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      setMobileOpen(value => !value)
+      return
+    }
+    setCollapsed(value => !value)
+  }
 
   return <div className="min-h-dvh bg-muted/25">
     <a href="#main" className="sr-only z-50 rounded bg-background p-3 focus:not-sr-only focus:fixed focus:left-3 focus:top-3">{t('nav.skip')}</a>
-    {!collapsed && <button type="button" aria-label={text.close} className="fixed inset-0 z-30 bg-foreground/10 backdrop-blur-[1px] md:hidden" onClick={() => setCollapsed(true)} />}
 
-    <aside className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r bg-sidebar text-sidebar-foreground shadow-sm transition-[width] duration-200 ${collapsed ? 'w-[72px]' : 'w-[240px]'}`}>
-      <div className={`flex h-[68px] items-center border-b ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
-        <Link to="/account" aria-label="MiawPOS" className={`flex min-h-[44px] items-center rounded-xl hover:bg-accent ${collapsed ? 'w-[44px] justify-center' : 'w-full gap-3 px-2'}`}>
+    {mobileOpen && <button type="button" aria-label={text.close} className="fixed inset-0 z-30 bg-foreground/15 backdrop-blur-sm md:hidden" onClick={() => setMobileOpen(false)} />}
+
+    <aside className={`fixed inset-y-0 left-0 z-40 flex w-[240px] flex-col border-r bg-sidebar text-sidebar-foreground shadow-sm transition-[transform,width] duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${collapsed ? 'md:w-[72px]' : 'md:w-[240px]'}`}>
+      <div className={`flex h-[68px] items-center px-4 ${collapsed ? 'md:justify-center md:px-2' : ''}`}>
+        <Link
+          to="/account"
+          aria-label="MiawPOS"
+          title={collapsed ? 'MiawPOS' : undefined}
+          onClick={() => setMobileOpen(false)}
+          className={`flex min-h-[44px] w-full items-center gap-3 rounded-xl px-2 hover:bg-accent ${collapsed ? 'md:w-[44px] md:justify-center md:gap-0 md:px-0' : ''}`}
+        >
           <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Cat className="size-5" aria-hidden="true" /></span>
-          {!collapsed && <span className="truncate text-[15px] font-semibold tracking-tight">MiawPOS</span>}
+          <span className={`truncate text-[15px] font-semibold tracking-tight ${compactLabelClass}`}>MiawPOS</span>
         </Link>
       </div>
+
       <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-3 py-4">
-        <button type="button" aria-label={text.search} onClick={() => { setSearchOpen(true); setPanel(null) }} className={`flex min-h-[44px] items-center rounded-xl text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground ${collapsed ? 'justify-center' : 'gap-3 px-3'}`}>
-          <Search className="size-[18px] shrink-0" aria-hidden="true" />{!collapsed && <span>{text.search}</span>}
+        <button
+          type="button"
+          aria-label={text.search}
+          title={collapsed ? text.search : undefined}
+          onClick={() => { setSearchOpen(true); setPanel(null); setMobileOpen(false) }}
+          className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground ${collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''}`}
+        >
+          <Search className="size-[18px] shrink-0" aria-hidden="true" /><span className={compactLabelClass}>{text.search}</span>
         </button>
+
         <nav aria-label={t('nav.label')}>
-          {!collapsed && <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{text.dashboards}</p>}
-          <Link to="/account" aria-current="page" className={`flex min-h-[44px] items-center rounded-xl bg-accent text-sm font-semibold ${collapsed ? 'justify-center' : 'gap-3 px-3'}`}>
-            <LayoutDashboard className="size-[18px] shrink-0" aria-hidden="true" />{!collapsed && <span>{text.dashboard}</span>}
+          <p className={`mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground ${compactLabelClass}`}>{text.dashboards}</p>
+          <Link
+            to="/account"
+            aria-current="page"
+            title={collapsed ? text.dashboard : undefined}
+            onClick={() => setMobileOpen(false)}
+            className={`flex min-h-[44px] items-center gap-3 rounded-xl bg-accent px-3 text-sm font-semibold ${collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''}`}
+          >
+            <LayoutDashboard className="size-[18px] shrink-0" aria-hidden="true" /><span className={compactLabelClass}>{text.dashboard}</span>
           </Link>
         </nav>
       </div>
     </aside>
 
-    <div className={`min-h-dvh pl-[72px] transition-[padding] duration-200 ${collapsed ? 'md:pl-[72px]' : 'md:pl-[240px]'}`}>
+    <div className={`min-h-dvh transition-[padding] duration-200 ${collapsed ? 'md:pl-[72px]' : 'md:pl-[240px]'}`}>
       <header className="sticky top-0 z-20 border-b bg-background/92 backdrop-blur-xl">
         <div className="flex min-h-[68px] items-center gap-1.5 px-3 sm:px-5">
-          <button type="button" aria-label={collapsed ? text.expand : text.collapse} onClick={() => setCollapsed(value => !value)} className={iconButton}>
-            {collapsed ? <ChevronRight className="size-[18px]" aria-hidden="true" /> : <ChevronLeft className="size-[18px]" aria-hidden="true" />}
+          <button
+            type="button"
+            aria-label={text.navigation}
+            title={collapsed ? text.expand : text.collapse}
+            onClick={toggleNavigation}
+            className={iconButton}
+          >
+            <Menu className="size-[18px] lg:hidden" aria-hidden="true" />
+            {collapsed ? <ChevronRight className="hidden size-[18px] lg:block" aria-hidden="true" /> : <ChevronLeft className="hidden size-[18px] lg:block" aria-hidden="true" />}
           </button>
           <div className="flex-1" />
+
           <div className="relative flex items-center gap-1">
-            <button type="button" aria-label={text.notifications} aria-expanded={panel === 'notifications'} onClick={() => togglePanel('notifications')} className={`${iconButton} relative`}>
+            <button type="button" aria-label={text.notifications} title={text.notifications} aria-expanded={panel === 'notifications'} onClick={() => togglePanel('notifications')} className={`${iconButton} relative`}>
               <Bell className="size-[18px]" aria-hidden="true" /><span className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-primary" />
             </button>
-            <button type="button" aria-label={mode === 'light' ? 'Dark mode' : 'Light mode'} onClick={() => setMode(value => value === 'light' ? 'dark' : 'light')} className={iconButton}>
+            <button type="button" aria-label={mode === 'light' ? text.darkMode : text.lightMode} title={mode === 'light' ? text.darkMode : text.lightMode} onClick={() => setMode(value => value === 'light' ? 'dark' : 'light')} className={iconButton}>
               {mode === 'light' ? <Sun className="size-[18px]" aria-hidden="true" /> : <Moon className="size-[18px]" aria-hidden="true" />}
             </button>
-            <button type="button" aria-label={text.appearance} aria-expanded={panel === 'appearance'} onClick={() => togglePanel('appearance')} className={iconButton}><Palette className="size-[18px]" aria-hidden="true" /></button>
-            <button type="button" aria-label={text.profile} aria-expanded={panel === 'profile'} onClick={() => togglePanel('profile')} className="ml-1 flex size-[40px] items-center justify-center rounded-full border bg-muted hover:bg-accent"><UserRound className="size-[18px]" aria-hidden="true" /></button>
+            <button type="button" aria-label={text.appearance} title={text.appearance} aria-expanded={panel === 'appearance'} onClick={() => togglePanel('appearance')} className={iconButton}><Palette className="size-[18px]" aria-hidden="true" /></button>
+            <button type="button" aria-label={text.profile} title={text.profile} aria-expanded={panel === 'profile' || panel === 'settings'} onClick={() => togglePanel('profile')} className="ml-1 flex size-[40px] items-center justify-center rounded-full border bg-muted hover:bg-accent"><UserRound className="size-[18px]" aria-hidden="true" /></button>
 
-            {panel === 'notifications' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(350px,calc(100vw-96px))] rounded-2xl border bg-popover p-3 shadow-xl">
+            {panel === 'notifications' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(350px,calc(100vw-24px))] rounded-2xl border bg-popover p-3 shadow-xl">
               <div className="flex items-center justify-between px-1 pb-2"><p className="text-sm font-semibold">{text.notifications}</p><button type="button" aria-label={text.close} onClick={() => setPanel(null)} className="flex size-8 items-center justify-center rounded-lg hover:bg-accent"><X className="size-4" /></button></div>
               <div className="flex gap-3 rounded-xl bg-muted/70 p-3"><span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Cat className="size-4" /></span><div><p className="text-sm font-semibold">{text.welcome}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{text.welcomeBody}</p></div></div>
             </div>}
 
-            {panel === 'appearance' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(380px,calc(100vw-96px))] rounded-2xl border bg-popover p-4 shadow-xl">
+            {panel === 'appearance' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(380px,calc(100vw-24px))] rounded-2xl border bg-popover p-4 shadow-xl">
               <div className="mb-4 flex items-center justify-between"><div><p className="text-sm font-semibold">{text.appearance}</p><p className="text-xs text-muted-foreground">{text.palette} · {text.font} · {text.scale}</p></div><button type="button" aria-label={text.close} onClick={() => setPanel(null)} className="flex size-8 items-center justify-center rounded-lg hover:bg-accent"><X className="size-4" /></button></div>
               <div className="space-y-4">
                 <div><p className="mb-2 text-xs font-medium text-muted-foreground">{text.palette}</p><div className="grid grid-cols-5 gap-2">{(Object.keys(palettes) as PaletteName[]).map(value => <button key={value} type="button" aria-label={value} aria-pressed={palette === value} onClick={() => setPalette(value)} className="relative flex min-h-[44px] items-center justify-center rounded-xl border bg-background"><span className="size-5 rounded-full border border-black/10" style={{ background: palettes[value].swatch }} />{palette === value && <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-foreground text-background"><Check className="size-2.5" /></span>}</button>)}</div></div>
                 <div><p className="mb-2 text-xs font-medium text-muted-foreground">{text.font}</p><div className="grid grid-cols-3 gap-2">{(['system', 'serif', 'mono'] as FontName[]).map(value => <button key={value} type="button" aria-pressed={font === value} onClick={() => setFont(value)} className={`min-h-[44px] rounded-xl border text-xs font-medium ${font === value ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{value}</button>)}</div></div>
                 <div><p className="mb-2 text-xs font-medium text-muted-foreground">{text.scale}</p><div className="grid grid-cols-4 gap-2">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => <button key={value} type="button" aria-pressed={scale === value} onClick={() => setScale(value)} className={`min-h-[44px] rounded-xl border text-xs font-semibold uppercase ${scale === value ? 'border-primary bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}>{value}</button>)}</div></div>
-                <div className="border-t pt-4"><LocaleSelect /></div>
               </div>
             </div>}
 
-            {panel === 'profile' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(300px,calc(100vw-96px))] rounded-2xl border bg-popover p-2 shadow-xl">
+            {panel === 'profile' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(300px,calc(100vw-24px))] rounded-2xl border bg-popover p-2 shadow-xl">
               <div className="px-3 py-3"><p className="text-sm font-semibold">{text.account}</p><p className="mt-1 break-all font-mono text-[11px] leading-5 text-muted-foreground">{principal.accountId}</p></div>
-              <div className="border-t p-1.5"><Link to="/app" onClick={() => setPanel(null)} className="flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm font-medium hover:bg-accent"><LayoutDashboard className="size-4 text-muted-foreground" />{t('root.open')}</Link><div aria-disabled="true" className="flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm text-muted-foreground/60"><Settings2 className="size-4" />{text.settings}</div><button type="button" disabled={pending} onClick={() => { void logout() }} className="flex min-h-[44px] w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-destructive hover:bg-destructive/10 disabled:opacity-50"><LogOut className="size-4" />{t(pending ? 'session.loggingOut' : 'session.logout')}</button></div>
+              <div className="border-t p-1.5">
+                <Link to="/app" onClick={() => setPanel(null)} className="flex min-h-[44px] items-center gap-3 rounded-xl px-3 text-sm font-medium hover:bg-accent"><LayoutDashboard className="size-4 text-muted-foreground" />{t('root.open')}</Link>
+                <button type="button" onClick={() => setPanel('settings')} className="flex min-h-[44px] w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium hover:bg-accent"><Settings2 className="size-4 text-muted-foreground" />{text.settings}</button>
+                <button type="button" disabled={pending} onClick={() => { void logout() }} className="flex min-h-[44px] w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-destructive hover:bg-destructive/10 disabled:opacity-50"><LogOut className="size-4" />{t(pending ? 'session.loggingOut' : 'session.logout')}</button>
+              </div>
+            </div>}
+
+            {panel === 'settings' && <div className="absolute right-0 top-[calc(100%+0.65rem)] w-[min(330px,calc(100vw-24px))] rounded-2xl border bg-popover p-3 shadow-xl">
+              <div className="flex items-center gap-2 pb-3">
+                <button type="button" aria-label={text.back} title={text.back} onClick={() => setPanel('profile')} className="flex size-9 shrink-0 items-center justify-center rounded-xl hover:bg-accent"><ChevronLeft className="size-4" /></button>
+                <div className="min-w-0"><p className="text-sm font-semibold">{text.settings}</p><p className="truncate text-xs text-muted-foreground">{text.settingsBody}</p></div>
+                <button type="button" aria-label={text.close} onClick={() => setPanel(null)} className="ml-auto flex size-9 shrink-0 items-center justify-center rounded-xl hover:bg-accent"><X className="size-4" /></button>
+              </div>
+              <div className="rounded-xl border bg-background p-3"><p className="mb-2 text-xs font-medium text-muted-foreground">{text.language}</p><LocaleSelect /></div>
             </div>}
           </div>
         </div>
