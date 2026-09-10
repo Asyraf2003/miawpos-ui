@@ -49,19 +49,22 @@
   color-scheme: light;
   --radius: 0.625rem;
 
-  /* One proportional geometry system. S/M/L/XL changes the root rem and every token follows. */
+  /* One proportional geometry system. Root rem is the only scale dial. */
   --ui-control: 2.75rem;
+  --ui-row: 2.75rem;
   --ui-logo: 2rem;
-  --ui-icon: 1rem;
+  --ui-icon: 1.125rem;
+  --shell-header: 3.5rem;
   --shell-sidebar-expanded: 13.75rem;
-  --shell-sidebar-collapsed: 3.25rem;
+  --shell-sidebar-collapsed: 3.75rem;
   --shell-content-max: 75rem;
   --shell-popover-width: 20rem;
-  --shell-profile-width: 17.5rem;
-  --shell-drawer-width: 21.25rem;
+  --shell-drawer-width: 18rem;
   --shell-command-width: 32.5rem;
   --shell-card-min: 9.375rem;
   --shell-card-ghost-min: 11.25rem;
+  --dashboard-columns: 3;
+  --panel-tint: #f3e8ff;
 
   --background: #ffffff;
   --foreground: #18181b;
