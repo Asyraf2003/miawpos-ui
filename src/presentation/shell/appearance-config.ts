@@ -8,13 +8,15 @@ export const palettes: Record<PaletteName, {
   dark: string
   lightText: string
   darkText: string
+  tintLight: string
+  tintDark: string
 }> = {
-  neutral: { swatch: '#18181b', light: '#18181b', dark: '#f4f4f5', lightText: '#ffffff', darkText: '#18181b' },
-  violet: { swatch: '#7c3aed', light: '#7c3aed', dark: '#a78bfa', lightText: '#ffffff', darkText: '#1f1638' },
-  blue: { swatch: '#2563eb', light: '#2563eb', dark: '#60a5fa', lightText: '#ffffff', darkText: '#10233f' },
-  green: { swatch: '#16a34a', light: '#15803d', dark: '#4ade80', lightText: '#ffffff', darkText: '#102719' },
-  amber: { swatch: '#d97706', light: '#b45309', dark: '#fbbf24', lightText: '#ffffff', darkText: '#2b1b02' },
-  rose: { swatch: '#e11d48', light: '#e11d48', dark: '#fb7185', lightText: '#ffffff', darkText: '#3a1219' },
+  neutral: { swatch: '#18181b', light: '#18181b', dark: '#f4f4f5', lightText: '#ffffff', darkText: '#18181b', tintLight: '#f4f4f5', tintDark: '#27272a' },
+  violet: { swatch: '#7c3aed', light: '#7c3aed', dark: '#a78bfa', lightText: '#ffffff', darkText: '#1f1638', tintLight: '#f3e8ff', tintDark: '#2e1065' },
+  blue: { swatch: '#2563eb', light: '#2563eb', dark: '#60a5fa', lightText: '#ffffff', darkText: '#10233f', tintLight: '#dbeafe', tintDark: '#172554' },
+  green: { swatch: '#16a34a', light: '#15803d', dark: '#4ade80', lightText: '#ffffff', darkText: '#102719', tintLight: '#dcfce7', tintDark: '#052e16' },
+  amber: { swatch: '#d97706', light: '#b45309', dark: '#fbbf24', lightText: '#ffffff', darkText: '#2b1b02', tintLight: '#fef3c7', tintDark: '#451a03' },
+  rose: { swatch: '#e11d48', light: '#e11d48', dark: '#fb7185', lightText: '#ffffff', darkText: '#3a1219', tintLight: '#ffe4e6', tintDark: '#4c0519' },
 }
 
 export const fonts: Record<FontName, string> = {
