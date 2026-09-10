@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react'
 import { CircleCheck } from 'lucide-react'
 import { Link } from 'react-router'
 import { buttonVariants } from '../../components/ui/button'
 import { useLocale, useSession } from '../context'
 import { OutcomeFeedback } from '../feedback/outcome-feedback'
 
-function DashboardCard({ title, children }: { title: string; children: React.ReactNode }) {
+function DashboardCard({ title, children }: { title: string; children: ReactNode }) {
   return <section className="flex min-h-[var(--shell-card-min)] flex-col overflow-hidden rounded-lg border bg-card">
     <header className="border-b bg-[var(--panel-tint)] px-4 py-3">
       <p className="text-xs font-medium">{title}</p>
