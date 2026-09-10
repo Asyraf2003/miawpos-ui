@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { checkLayout, checkStorage, login } from './helpers'
+import { checkLayout, checkStorage, login, openAccountSettings, signOut } from './helpers'
 
 test('responsive navigation, keyboard input, locale, and reflow smoke', async ({ page }, testInfo) => {
   await page.goto('/')
@@ -13,19 +13,25 @@ test('responsive navigation, keyboard input, locale, and reflow smoke', async ({
   await page.screenshot({ path: `test-results/${testInfo.project.name}-login.png`, fullPage: true })
   await login(page)
   await checkLayout(page)
+
   if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: 'Buka navigasi' }).click()
-    await expect(page.locator('#mobile-nav').getByRole('link', { name: 'Akun', exact: true })).toBeVisible()
-    await page.locator('#mobile-nav').getByRole('link', { name: 'Akun', exact: true }).click()
+    await page.getByRole('button', { name: 'Navigasi', exact: true }).click()
+    const mobileSidebar = page.locator('#primary-sidebar')
+    await expect(mobileSidebar.getByRole('link', { name: 'Dashboard', exact: true })).toBeVisible()
+    await mobileSidebar.getByRole('link', { name: 'Dashboard', exact: true }).click()
   }
+
+  await openAccountSettings(page)
   await page.getByLabel('Bahasa / Language').click()
   await expect(page.getByRole('option', { name: 'English' })).toBeVisible()
   await checkLayout(page)
   await page.getByRole('option', { name: 'English' }).click()
   await expect(page.getByRole('heading', { name: 'Your account' })).toBeVisible()
   await expect(page.locator('[role="option"]:visible')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Close', exact: true }).click()
   await checkLayout(page)
   await page.screenshot({ path: `test-results/${testInfo.project.name}-account.png`, fullPage: true })
+
   await page.getByRole('link', { name: 'Open workspace' }).click()
   // The tablet chain created two memberships. A fresh client must ask, not remember.
   await expect(page.getByRole('heading', { name: 'Choose a workspace' })).toBeVisible()
@@ -51,7 +57,7 @@ test('responsive navigation, keyboard input, locale, and reflow smoke', async ({
   await checkLayout(page)
   await page.screenshot({ path: `test-results/${testInfo.project.name}-reversal-320.png`, fullPage: true })
   await page.getByRole('link', { name: 'Account', exact: true }).click()
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click()
+  await signOut(page, 'User menu', 'Sign out')
   await expect(page.getByRole('heading', { name: 'Sign in to MiawPOS' })).toBeVisible()
   await checkLayout(page)
   await checkStorage(page)
