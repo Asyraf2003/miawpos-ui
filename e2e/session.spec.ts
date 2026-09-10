@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { login, checkStorage, checkLayout } from './helpers'
+import { login, checkStorage, checkLayout, signOut } from './helpers'
 
 test('real PostgreSQL login → /me → cookie reload → authoritative logout', async ({ page, context, request }) => {
   const browserErrors: string[] = []
@@ -67,7 +67,7 @@ test('real PostgreSQL login → /me → cookie reload → authoritative logout',
   expect((await (await secondRefresh).json()).session_exp).toBe(refreshed.session_exp)
 
   const logout = page.waitForResponse(response => response.url().endsWith('/browser/logout'))
-  await page.getByRole('button', { name: 'Keluar', exact: true }).click()
+  await signOut(page)
   expect((await logout).status()).toBe(204)
   await expect(page.getByRole('heading', { name: 'Masuk ke MiawPOS' })).toBeVisible()
   await expect(page.getByRole('status')).toContainText('Anda telah keluar')
