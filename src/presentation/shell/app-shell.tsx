@@ -168,8 +168,8 @@ export function AppShell() {
         </HoverHint>
 
         <HoverHint label={text.search} side="right">
-          <button type="button" aria-label={text.search} onClick={() => { setSearchOpen(true); setPanel(null); setMobileOpen(false) }} className={`flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground ${collapsedSquare}`}>
-            <Search className="size-[var(--ui-icon)] shrink-0" aria-hidden="true" />
+          <button type="button" aria-label={text.search} onClick={() => { setSearchOpen(true); setPanel(null); setMobileOpen(false) }} className={`group flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground ${collapsed ? 'md:hover:bg-transparent' : ''} ${collapsedSquare}`}>
+            <span className={`flex shrink-0 items-center justify-center ${collapsed ? 'md:size-[var(--ui-logo)] md:rounded-md md:group-hover:bg-accent' : ''}`}><Search className="size-[var(--ui-icon)] shrink-0" aria-hidden="true" /></span>
             <span className={compact}>{text.search}</span>
           </button>
         </HoverHint>
@@ -177,8 +177,8 @@ export function AppShell() {
         <p className={`px-2 text-[0.625rem] font-medium text-muted-foreground ${compact}`}>{text.dashboards}</p>
 
         <HoverHint label={text.dashboard} side="right">
-          <Link to="/account" aria-current="page" onClick={() => setMobileOpen(false)} className={`flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md bg-primary/10 px-2 text-sm font-medium text-foreground transition-colors hover:bg-accent ${collapsedSquare}`}>
-            <LayoutDashboard className="size-[var(--ui-icon)] shrink-0" aria-hidden="true" />
+          <Link to="/account" aria-current="page" onClick={() => setMobileOpen(false)} className={`group flex min-h-[var(--ui-control)] w-full items-center gap-2 rounded-md bg-primary/10 px-2 text-sm font-medium text-foreground transition-colors hover:bg-accent ${collapsed ? 'md:bg-transparent md:hover:bg-transparent' : ''} ${collapsedSquare}`}>
+            <span className={`flex shrink-0 items-center justify-center transition-colors ${collapsed ? 'md:size-[var(--ui-logo)] md:rounded-md md:bg-primary/10 md:group-hover:bg-accent' : ''}`}><LayoutDashboard className="size-[var(--ui-icon)] shrink-0" aria-hidden="true" /></span>
             <span className={compact}>{text.dashboard}</span>
           </Link>
         </HoverHint>
