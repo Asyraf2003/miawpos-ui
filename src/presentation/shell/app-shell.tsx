@@ -135,7 +135,7 @@ export function AppShell() {
 
   const compact = collapsed ? 'md:hidden' : ''
   const collapsedSquare = collapsed ? 'md:size-[var(--ui-control)] md:justify-center md:px-0' : ''
-  const controlClass = 'flex size-[var(--ui-control)] items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground'
+  const controlClass = 'relative flex size-[var(--ui-control)] items-center justify-center rounded-md text-muted-foreground outline-none transition-colors before:absolute before:size-[var(--ui-logo)] before:rounded-md before:transition-colors hover:text-foreground hover:before:bg-accent aria-[expanded=true]:before:bg-primary/10 [&>svg]:relative [&>svg]:z-10'
 
   const toggleNavigation = () => {
     if (window.matchMedia('(max-width: 767px)').matches) {
@@ -200,7 +200,7 @@ export function AppShell() {
             <HoverHint label={text.notifications} align="end">
               <button type="button" aria-label={text.notifications} aria-expanded={panel === 'notifications'} onClick={() => setPanel(value => value === 'notifications' ? null : 'notifications')} className={`${controlClass} relative`}>
                 <Bell className="size-[var(--ui-icon)]" aria-hidden="true" />
-                <span className="absolute right-[0.625rem] top-[0.625rem] size-1.5 rounded-full bg-primary" />
+                <span className="absolute right-[0.625rem] top-[0.625rem] z-20 size-1.5 rounded-full bg-primary" />
               </button>
             </HoverHint>
             <HoverHint label={mode === 'light' ? text.darkMode : text.lightMode} align="end">
@@ -212,7 +212,7 @@ export function AppShell() {
               <button type="button" aria-label={text.customize} aria-expanded={panel === 'appearance'} onClick={() => setPanel(value => value === 'appearance' ? null : 'appearance')} className={controlClass}><Palette className="size-[var(--ui-icon)]" aria-hidden="true" /></button>
             </HoverHint>
             <HoverHint label={text.account} align="end">
-              <button type="button" aria-label={id ? 'Menu pengguna' : 'User menu'} aria-expanded={panel === 'profile' || panel === 'settings'} onClick={() => setPanel(value => value === 'profile' ? null : 'profile')} className={controlClass}><span className="flex size-[var(--ui-logo)] items-center justify-center rounded-full border bg-muted"><UserRound className="size-[var(--ui-icon)]" aria-hidden="true" /></span></button>
+              <button type="button" aria-label={id ? 'Menu pengguna' : 'User menu'} aria-expanded={panel === 'profile' || panel === 'settings'} onClick={() => setPanel(value => value === 'profile' ? null : 'profile')} className={controlClass}><span className="relative z-10 flex size-[var(--ui-logo)] items-center justify-center rounded-full border bg-muted"><UserRound className="size-[var(--ui-icon)]" aria-hidden="true" /></span></button>
             </HoverHint>
 
             {panel === 'notifications' && <HeaderPanel title={text.notifications}>
@@ -253,7 +253,7 @@ export function AppShell() {
         <button type="button" aria-label={text.close} onClick={() => setPanel(null)} className={controlClass}><X className="size-[var(--ui-icon)]" /></button>
       </div>
       <div className="flex flex-col gap-4 px-3 py-2">
-        <section><p className="mb-2 text-xs font-medium text-muted-foreground">{text.palette}</p><div className="grid grid-cols-6 gap-2">{(Object.keys(palettes) as PaletteName[]).map(value => <button key={value} type="button" aria-label={value} aria-pressed={palette === value} onClick={() => setPalette(value)} className="relative flex aspect-square w-full items-center justify-center rounded-md border transition-colors hover:bg-accent"><span className="size-[var(--ui-icon)] rounded-full border border-black/10" style={{ backgroundColor: palettes[value].swatch }} />{palette === value && <span className="absolute -right-1 -top-1 flex size-[var(--ui-icon)] items-center justify-center rounded-full bg-foreground text-background"><Check className="size-[0.625rem]" /></span>}</button>)}</div></section>
+        <section><p className="mb-2 text-xs font-medium text-muted-foreground">{text.palette}</p><div className="grid grid-cols-6 gap-2">{(Object.keys(palettes) as PaletteName[]).map(value => <button key={value} type="button" aria-label={value} aria-pressed={palette === value} onClick={() => setPalette(value)} className="group relative flex size-[var(--ui-control)] items-center justify-center justify-self-center rounded-md"><span className="relative flex size-[var(--ui-logo)] items-center justify-center rounded-md border transition-colors group-hover:bg-accent"><span className="size-[var(--ui-icon)] rounded-full border border-black/10" style={{ backgroundColor: palettes[value].swatch }} />{palette === value && <span className="absolute -right-1 -top-1 flex size-[var(--ui-icon)] items-center justify-center rounded-full bg-foreground text-background"><Check className="size-[0.625rem]" /></span>}</span></button>)}</div></section>
         <section><p className="mb-2 text-xs font-medium text-muted-foreground">Font</p><div className="grid grid-cols-3 gap-2">{(['system', 'serif', 'mono'] as FontName[]).map(value => <button key={value} type="button" aria-pressed={font === value} onClick={() => setFont(value)} className={`min-h-[var(--ui-control)] rounded-md border px-2 text-xs font-medium transition-colors ${font === value ? 'bg-foreground text-background' : 'hover:bg-accent'}`}>{value}</button>)}</div></section>
         <section><div className="mb-2 flex items-center justify-between gap-2"><p className="text-xs font-medium text-muted-foreground">{text.scale}</p><span className="text-[0.6875rem] text-muted-foreground">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => scales[value].label).join(' · ')}</span></div><div className="grid grid-cols-4 gap-2">{(['s', 'm', 'l', 'xl'] as ScaleName[]).map(value => <button key={value} type="button" aria-pressed={scale === value} onClick={() => setScale(value)} className={`min-h-[var(--ui-control)] rounded-md border text-xs font-semibold uppercase transition-colors ${scale === value ? 'bg-foreground text-background' : 'hover:bg-accent'}`}>{value}</button>)}</div></section>
         <section><p className="mb-2 text-xs font-medium text-muted-foreground">{text.layout}</p><div className="grid grid-cols-4 gap-2">{([2, 3, 4, 5] as Columns[]).map(value => <button key={value} type="button" aria-pressed={columns === value} onClick={() => setColumns(value)} className={`min-h-[var(--ui-control)] rounded-md border text-xs font-semibold transition-colors ${columns === value ? 'bg-foreground text-background' : 'hover:bg-accent'}`}>{value}</button>)}</div></section>
