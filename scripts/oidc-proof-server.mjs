@@ -1,6 +1,8 @@
 // Test-only external OIDC boundary. The real backend still runs discovery,
 // signature/audience/issuer/nonce verification, PKCE, GoogleFlow and PostgreSQL.
 import http from 'node:http'
+import { writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { generateKeyPairSync, randomBytes, createHash, sign, timingSafeEqual } from 'node:crypto'
 
 const issuer = 'http://127.0.0.1:4184'
@@ -66,5 +68,8 @@ const server = http.createServer(async (req, res) => {
   }
   json(res, 404, { error: 'not_found' })
 })
-server.listen(4184, '127.0.0.1', () => console.log('Deterministic external OIDC proof server ready'))
+server.listen(4184, '127.0.0.1', () => {
+  if (process.env.PROOF_READY_DIR) writeFileSync(resolve(process.env.PROOF_READY_DIR, 'oidc.ready'), '')
+  console.log('Deterministic external OIDC proof server ready')
+})
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close())

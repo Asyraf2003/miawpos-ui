@@ -25,9 +25,12 @@ test('responsive navigation, keyboard input, locale, and reflow smoke', async ({
   // interaction target floor must remain at least 44 CSS px.
   await page.getByRole('button', { name: 'Kustomisasi', exact: true }).click()
   const appearance = page.locator('aside[aria-label="Kustomisasi"]')
-  await appearance.getByRole('button', { name: 'S', exact: true }).click()
+  const smallScale = appearance.getByRole('button', { name: 's', exact: true })
+  await smallScale.click()
+  await expect(smallScale).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('html')).toHaveCSS('font-size', '13px')
   await checkLayout(page)
-  await appearance.getByRole('button', { name: 'M', exact: true }).click()
+  await appearance.getByRole('button', { name: 'm', exact: true }).click()
   await appearance.getByRole('button', { name: 'Tutup', exact: true }).click()
 
   await openAccountSettings(page)

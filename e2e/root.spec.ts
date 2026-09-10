@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { login, checkLayout, checkStorage } from './helpers'
+import { login, checkLayout, checkStorage, signOut } from './helpers'
 
 test('human ROOT → catalog/pricing → Cash retry/readback → reversal → logout', async ({ page, request }) => {
   await page.goto('/login')
@@ -90,7 +90,7 @@ test('human ROOT → catalog/pricing → Cash retry/readback → reversal → lo
   expect((await request.get(`/api/roots/${rootId}/sales/${saleId}`, { headers })).status()).toBe(200)
   await checkStorage(page)
   await page.getByRole('link', { name: 'Akun', exact: true }).click()
-  await page.getByRole('button', { name: 'Keluar', exact: true }).click()
+  await signOut(page)
   await page.goto('/app')
   await expect(page.getByRole('heading', { name: 'Masuk ke MiawPOS' })).toBeVisible()
 })
