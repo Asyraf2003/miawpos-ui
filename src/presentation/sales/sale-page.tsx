@@ -1,3 +1,4 @@
+import { useFormProgression } from '../use-form-progression'
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
@@ -10,6 +11,7 @@ import { useWorkspacePorts } from '../workspace-ports'
 import { OutcomeFeedback } from '../feedback/outcome-feedback'
 
 export function SalePage({ rootId }: { rootId: string }) {
+  const progression = useFormProgression()
   const { saleId } = useParams()
   const { sales } = useWorkspacePorts()
   const { t, locale } = useLocale()
@@ -40,7 +42,7 @@ export function SalePage({ rootId }: { rootId: string }) {
       <p className="break-all text-xs text-muted-foreground">{t('sale.reference')}: {sale.data.id}</p>
       <ul className="divide-y">{sale.data.lines.map((line, index) => <li key={index} className="flex flex-wrap justify-between gap-3 py-3"><span className="min-w-0 break-words">{line.name} × {line.quantity}</span><span className="min-w-0 break-words tabular-nums">{money(line.totalRupiah)}</span></li>)}</ul>
       <dl className="grid grid-cols-2 gap-3 border-t pt-4 break-words tabular-nums"><dt>{t('sale.total')}</dt><dd className="text-right font-semibold">{money(sale.data.totalRupiah)}</dd><dt>{t('sale.tender')}</dt><dd className="text-right">{money(sale.data.tenderedRupiah)}</dd><dt>{t('sale.change')}</dt><dd className="text-right">{money(sale.data.changeRupiah)}</dd></dl>
-      {sale.data.reversal ? <div className="space-y-2 border-t pt-4 break-words"><p>{t('sale.refund')}: <strong className="tabular-nums">{money(sale.data.reversal.refundRupiah)}</strong></p><p>{sale.data.reversal.reason}</p></div> : <form className="space-y-4 border-t pt-6" onSubmit={event => { void reverse(event) }}>
+      {sale.data.reversal ? <div className="space-y-2 border-t pt-4 break-words"><p>{t('sale.refund')}: <strong className="tabular-nums">{money(sale.data.reversal.refundRupiah)}</strong></p><p>{sale.data.reversal.reason}</p></div> : <form {...progression} className="space-y-4 border-t pt-6" onSubmit={event => { void reverse(event) }}>
         <h3 className="font-semibold">{t('sale.reverse')}</h3><p className="text-sm text-muted-foreground">{t('sale.reverseBody')}</p>
         <label htmlFor="reversal-reason">{t('sale.reason')}</label><Input id="reversal-reason" value={reason} required disabled={pending || uncertain} onChange={event => setReason(event.target.value)} />
         <Button type="submit" variant="destructive" disabled={pending || uncertain} className="h-auto whitespace-normal px-4 py-3">{t(pending ? 'sale.reversing' : 'sale.reverseConfirm')}</Button>

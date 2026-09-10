@@ -1,3 +1,4 @@
+import { useFormProgression } from '../use-form-progression'
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { Button, buttonVariants } from '../../components/ui/button'
@@ -11,6 +12,7 @@ import { SalePage } from '../sales/sale-page'
 import { useWorkspacePorts } from '../workspace-ports'
 
 export function RootPage() {
+  const progression = useFormProgression()
   const { t } = useLocale()
   const root = useRoots()
   const { cash } = useWorkspacePorts()
@@ -59,7 +61,7 @@ export function RootPage() {
       !root.roots.length ? <section className="space-y-6 overflow-hidden rounded-lg border bg-card">
         <header className="border-b bg-[var(--panel-tint)] px-6 py-4"><h1 className="text-2xl font-semibold">{t('root.new')}</h1><p className="mt-2 text-sm text-muted-foreground">{t('root.newBody')}</p></header>
         <div className="px-6 pb-6">
-          <form onSubmit={event => { void submit(event) }} className="space-y-5">
+          <form {...progression} onSubmit={event => { void submit(event) }} className="space-y-5">
             <div className="space-y-2"><label htmlFor="root-name" className="text-sm font-medium">{t('root.name')}</label><Input id="root-name" value={name} onChange={event => setName(event.target.value)} required disabled={pending} aria-describedby="root-name-help" /><p id="root-name-help" className="text-xs text-muted-foreground">{t('root.nameHelp')}</p></div>
             <OutcomeFeedback value={notice} />
             <Button type="submit" disabled={pending || uncertain} className="h-auto whitespace-normal px-4 py-3">{t(pending ? 'root.creating' : 'root.create')}</Button>

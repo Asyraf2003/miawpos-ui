@@ -25,9 +25,11 @@ function app(roots: unknown[], fail = false, lostCreate = false) {
 describe('human ROOT context', () => {
   it('requires a list read after uncertain creation instead of allowing a duplicate first ROOT', async () => {
     const { user } = app([], false, true)
-    await user.type(await screen.findByLabelText('Nama ruang usaha'), 'Toko Satu')
-    await user.click(screen.getByRole('button', { name: 'Buat ruang usaha' }))
+    expect(await screen.findByLabelText('Nama ruang usaha')).toHaveFocus()
+    await user.keyboard('Toko Satu{Enter}')
     expect(await screen.findByText('Tidak dapat terhubung')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Buat ruang usaha' })).toBeDisabled()
+    await user.keyboard('{Enter}')
     expect(screen.getByRole('button', { name: 'Buat ruang usaha' })).toBeDisabled()
     await user.click(screen.getByRole('button', { name: 'Periksa ruang usaha yang sudah dibuat' }))
     expect(await screen.findByRole('heading', { name: 'Toko Satu' })).toBeVisible()

@@ -1,3 +1,4 @@
+import { useFormProgression } from '../use-form-progression'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { CatalogItem } from '../../domain/catalog'
@@ -9,6 +10,7 @@ import { useWorkspacePorts } from '../workspace-ports'
 import { OutcomeFeedback } from '../feedback/outcome-feedback'
 
 export function CashForm({ item }: { item: CatalogItem }) {
+  const progression = useFormProgression()
   const { cash } = useWorkspacePorts()
   const { t } = useLocale()
   const navigate = useNavigate()
@@ -31,7 +33,7 @@ export function CashForm({ item }: { item: CatalogItem }) {
     } catch (error) { if (live.current) setNotice(outcomeFrom(error)) }
     finally { busy.current = false; if (live.current) setPending(false) }
   }
-  return <form className="space-y-5 border-t pt-6" onSubmit={event => { void submit(event) }}>
+  return <form {...progression} className="space-y-5 border-t pt-6" onSubmit={event => { void submit(event) }}>
     <h2 className="text-xl font-semibold">{t('sale.cash')}</h2>
     <div className="space-y-2"><label htmlFor="sale-quantity">{t('sale.quantity')}</label><Input id="sale-quantity" inputMode="numeric" required value={quantity} disabled={pending || !!attempt} onChange={event => setQuantity(event.target.value)} /></div>
     <div className="space-y-2"><label htmlFor="sale-tender">{t('sale.tender')}</label><Input id="sale-tender" inputMode="numeric" required value={tender} disabled={pending || !!attempt} onChange={event => setTender(event.target.value)} /></div>

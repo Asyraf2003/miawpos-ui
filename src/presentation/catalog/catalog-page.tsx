@@ -1,3 +1,4 @@
+import { useFormProgression } from '../use-form-progression'
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -11,6 +12,7 @@ import { OutcomeFeedback } from '../feedback/outcome-feedback'
 import { CashForm } from '../sales/cash-form'
 
 export function CatalogPage({ rootId }: { rootId: string }) {
+  const progression = useFormProgression()
   const { t, locale } = useLocale()
   const { catalog } = useWorkspacePorts()
   const { itemId } = useParams()
@@ -44,7 +46,7 @@ export function CatalogPage({ rootId }: { rootId: string }) {
   </section>
   return <section className="space-y-5 border-t pt-6">
     <h2 className="text-xl font-semibold">{t('catalog.new')}</h2>
-    <form className="space-y-5" onSubmit={event => { void submit(event) }}>
+    <form {...progression} className="space-y-5" onSubmit={event => { void submit(event) }}>
       <div className="space-y-2"><label htmlFor="item-name">{t('catalog.name')}</label><Input id="item-name" value={name} required disabled={pending} onChange={event => setName(event.target.value)} /></div>
       <div className="space-y-2"><label htmlFor="item-price">{t('catalog.price')}</label><Input id="item-price" inputMode="numeric" value={price} disabled={pending} onChange={event => setPrice(event.target.value)} aria-describedby="price-help" /><p id="price-help" className="text-sm text-muted-foreground">{t('catalog.priceHelp')}</p></div>
       <OutcomeFeedback value={notice} />

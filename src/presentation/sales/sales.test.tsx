@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { MemoryRouter } from 'react-router'
@@ -6,7 +6,7 @@ import { Providers } from '../../app/providers'
 import { AppRouter } from '../../app/router'
 import { createRuntime } from '../../app/runtime'
 import type { Fetch } from '../../adapters/api/http-client'
-import { authDto, meDto, json } from '../../test/fixtures'
+import { authDto, meDto, json, failure, deferred } from '../../test/fixtures'
 import { reversalDto, saleDto, success } from '../../test/sale-fixtures'
 
 function setup(path: string, financial: Fetch) {
@@ -22,6 +22,34 @@ function setup(path: string, financial: Fetch) {
 }
 
 describe('Cash and reversal human feedback', () => {
+  it('advances Cash by keyboard, preserves validation, and blocks repeated submission while pending', async () => {
+    const response = deferred<Response>()
+    let posts = 0
+    const { user } = setup('/app/catalog/item', async (_url, init) => {
+      if (init?.method === 'POST') { posts++; return response.promise }
+      return json(success(saleDto))
+    })
+    expect(await screen.findByLabelText('Jumlah')).toHaveFocus()
+    await user.clear(screen.getByLabelText('Jumlah'))
+    await user.keyboard('0{Enter}')
+    expect(screen.getByLabelText('Uang diterima (Rupiah)')).toHaveFocus()
+    expect(posts).toBe(0)
+    await user.keyboard('50000{Enter}')
+    expect(await screen.findByRole('alert')).toBeVisible()
+    expect(posts).toBe(0)
+    await user.clear(screen.getByLabelText('Jumlah'))
+    await user.keyboard('2{Enter}{Enter}{Enter}{Enter}')
+    expect(posts).toBe(1)
+    expect(screen.getByLabelText('Jumlah')).toBeDisabled()
+    expect(screen.getByLabelText('Uang diterima (Rupiah)')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Memproses pembayaran…' })).toBeDisabled()
+    await act(async () => { response.resolve(failure(422, 'insufficient_cash_tender')) })
+    expect(await screen.findByRole('alert')).toBeVisible()
+    expect(screen.getByText('Uang tunai belum mencukupi total penjualan. Periksa jumlah uang yang diterima.')).toBeVisible()
+    expect(screen.getByLabelText('Jumlah')).toBeEnabled()
+    expect(posts).toBe(1)
+  })
+
   it('does not claim a sale after transport loss; retries immutable intent and renders GET truth', async () => {
     const requests: RequestInit[] = []
     let reads = 0
@@ -59,8 +87,8 @@ describe('Cash and reversal human feedback', () => {
       if (init?.method === 'POST') { posts++; reversed = true; throw new TypeError('lost after commit') }
       return json(success(reversed ? { ...saleDto, status: 'REVERSED', reversal: reversalDto } : saleDto))
     })
-    await user.type(await screen.findByLabelText('Alasan pembatalan'), 'Salah pesanan')
-    await user.click(screen.getByRole('button', { name: 'Konfirmasi pembatalan dan refund' }))
+    expect(await screen.findByLabelText('Alasan pembatalan')).toHaveFocus()
+    await user.keyboard('Salah pesanan{Enter}')
     expect(await screen.findByText('Tidak dapat terhubung')).toBeVisible()
     expect(screen.queryByText('Penjualan dibatalkan dan refund tercatat')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Konfirmasi pembatalan dan refund' })).toBeDisabled()
