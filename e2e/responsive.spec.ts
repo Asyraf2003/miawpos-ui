@@ -21,6 +21,15 @@ test('responsive navigation, keyboard input, locale, and reflow smoke', async ({
     await mobileSidebar.getByRole('link', { name: 'Dashboard', exact: true }).click()
   }
 
+  // The smallest presentation scale may compact rem-based geometry, but the accepted
+  // interaction target floor must remain at least 44 CSS px.
+  await page.getByRole('button', { name: 'Kustomisasi', exact: true }).click()
+  const appearance = page.locator('aside[aria-label="Kustomisasi"]')
+  await appearance.getByRole('button', { name: 'S', exact: true }).click()
+  await checkLayout(page)
+  await appearance.getByRole('button', { name: 'M', exact: true }).click()
+  await appearance.getByRole('button', { name: 'Tutup', exact: true }).click()
+
   await openAccountSettings(page)
   await page.getByLabel('Bahasa / Language').click()
   await expect(page.getByRole('option', { name: 'English' })).toBeVisible()
